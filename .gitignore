@@ -1,0 +1,27 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+
+
+# do not track these folders
+tests/testthat/outputs/*
+tests/testthat/logs/*
+logs/*
+
+
+# do not track these files
+*.html
+*.log
+
+inst/doc
+docs/
+public/
+
+# Exeptions
+!tests/testthat/outputs/20240710_1957/
+!tests/testthat/fixtures/report/dummy_report.html
+!tests/testthat/fixtures/custom_report/custom_dummy_report.html
+!tests/testthat/fixtures/logs/*
+!tests/testthat/fixtures/logs/cron_jobs/*
+!tests/testthat/fixtures/logs/cron_logs/*

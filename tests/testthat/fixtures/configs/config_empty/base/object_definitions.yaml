@@ -1,0 +1,7 @@
+__defaults__:
+  skip_cache: no
+  tag: no_tag
+  type: object
+  output_formats: xlsx
+  output_arguments: ~
+  output_formats_custom: ~

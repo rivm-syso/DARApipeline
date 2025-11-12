@@ -1,0 +1,2 @@
+dir_outputs: fixtures/outputs/{RUN_TIMESTAMP}
+dir_scripts: fixtures/scripts/

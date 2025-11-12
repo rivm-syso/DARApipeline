@@ -1,0 +1,20 @@
+[extend]
+useDefault = true
+
+[[rules]]
+id = "sql_connection_string"
+description = "SQL connection string with password"
+regex = '''(?i)\b(?:user id|uid)\s*=\s*[^;]+;[^;]*\b(?:password|pwd)\s*=\s*[^;]+;|(?:password|pwd)\s*=\s*[^;]+;[^;]*\b(?:user id|uid)\s*=\s*[^;]+;'''
+tags = ["connection-string", "sql-server", "mysql", "password"]
+
+[[rules]]
+id = "postgresql_connection_string"
+description = "PostgreSQL connection string with password"
+regex = '''(?i)\buser\s*=\s*\S+\s+password\s*=\s*\S+|\bpassword\s*=\s*\S+\s+user\s*=\s*\S+'''
+tags = ["connection-string", "posgresql", "password"]
+
+[[rules]]
+id = "url_password"
+description = "Detects URLs with hardcoded passwords (excludes env-like values by only matching typical hardcoded patterns)."
+regex = '''(?i)\b(?:https?|sftp|ftp|git|ssh|rsync|file|jdbc(?:\+\w+)?):\/\/[^:\s\/]+:[a-z0-9!#%&*+=?._~-]{4,}@[^\/\s]+(?:\/\S*)?'''
+tags = ["url", "credentials", "password", "secrets", "hardcoded"]

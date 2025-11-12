@@ -1,0 +1,22 @@
+linters: linters_with_tags(tags = c("default", "common_mistakes", "executing", "package_development"),
+  line_length_linter = line_length_linter(120),
+  commented_code_linter = NULL,
+  object_usage_linter = NULL,
+  return_linter = NULL,
+  object_name_linter = NULL,
+  object_length_linter = object_length_linter(length = 32L),
+  trailing_whitespace_linter = NULL,
+  pipe_consistency_linter(pipe = c("|>")),
+  backport_linter(r_version = getRversion(), except = character()),
+  package_hooks_linter = NULL,
+  expect_s3_class_linter = NULL,
+  expect_s4_class_linter = NULL
+  )
+encoding: "UTF-8"
+exclusions: list(
+    "vignettes/render_report-vignette.Rmd" = list(missing_package_linter = Inf),
+    "vignettes/check_last_successful_run-vignette.Rmd" = list(missing_package_linter = Inf),
+    "tests/testthat/test-pipeline_render_report.R" = list(missing_argument_linter = 16L),
+    "tests/testthat.R" = list(unused_import_linter = Inf, missing_package_linter = Inf),
+    "tests/testthat/fixtures"
+  )

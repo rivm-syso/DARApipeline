@@ -1,0 +1,34 @@
+---
+# we combine the RIVM logo and the actual title in the title argument
+title: 'Dummy report COVID-19 in the Netherlands'
+date: '`r format(Sys.Date(), "%B %d, %Y")`'
+author: "Rijksinstituut voor Volksgezondheid en Milieu - RIVM"
+output:
+  html_document:
+      # here we define the table of content
+      toc: true
+      toc_float: true
+      toc_depth: 4
+      # here we define the theme (font and color)
+      theme:
+        base_font: "Verdana"
+        primary: "#ca005d"
+params: # NOTE these are standard values, can be changed in render function
+  example_variable: ""
+---
+
+```{r NL, include = FALSE}
+# we use chunk option include=FALSE to hide the code and the result from the output
+# Labels and axis etc. in Dutch
+Sys.setlocale("LC_TIME", "nl_NL.UTF-8")#Intentional Syntaxt error here!!!!
+```
+
+## Introduction
+This is a dummy report. It reports on COVID-19 cases in the period
+Find more information about R Markdown and how to create all elements in this template report (and more!)
+on the [DARA wiki page](https://gitlab.rivm.nl/dara/wiki/-/wikis/Guide:-R-Markdown-in-report)
+about R Markdown.
+
+
+Note that that we can also add variables through the markdown render:
+`r ifelse(params$example_variable == "", "No variable found", params$example_variable)`

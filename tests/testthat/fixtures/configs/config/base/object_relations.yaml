@@ -1,0 +1,18 @@
+obj_A:
+- somedata
+- staticdata
+obj_B:
+- obj_A
+obj_C:
+- obj_B
+obj_D:
+- staticdata
+- obj_A
+- obj_C
+obj_F:
+- obj_E
+obj_G:
+- obj_E
+obj_H:
+- obj_F
+- obj_G

@@ -1,0 +1,16 @@
+__defaults__:
+  skip_cache: no
+  tag: no_tag
+  type: object
+  output_formats: ~
+  output_arguments: ~
+  output_formats_custom: ~
+obj_H:
+  type: object
+  copy_to_file_path_wrong: fixtures/data/copied/copied_object_H.csv
+  overwrite: TRUE
+  tag: ~
+copy_object_H:
+  tag: no_tag
+  type: other
+  output_formats: ~

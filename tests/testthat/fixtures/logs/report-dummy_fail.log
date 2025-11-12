@@ -1,0 +1,11 @@
+========== PLEASE NOTE: Below are example logs ==========
+INFO [2024-09-04 08:30:21] Importing config from 'config'..
+WARN [2024-09-04 08:30:21] incomplete final line found on 'config/base/object_definitions.yaml'
+INFO [2024-09-04 08:30:22] Init finished!
+INFO [2024-09-04 08:30:22] Loaded common variables!
+INFO [2024-09-04 08:30:22] Passwords are loaded
+INFO [2024-09-04 08:30:22] Initialized!
+
+Error in eval(quote({ :
+  De data heeft status 'Dummy' nog niet gerapporteerd
+Execution halted

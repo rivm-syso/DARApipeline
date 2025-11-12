@@ -1,0 +1,36 @@
+repos:
+  - repo: local
+    hooks:
+      - id: roxygenize
+        name: Roxygenize package
+        entry: Rscript -e "roxygen2::roxygenize()"
+        language: system
+        files: '^(R|man)/'
+  - repo: https://github.com/lorenzwalthert/precommit
+    rev: v0.4.3.9014
+    hooks:
+      - id: use-tidy-description
+      - id: lintr
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+    - id: check-case-conflict
+    - id: check-illegal-windows-names
+    - id: check-json
+    - id: check-merge-conflict
+    - id: check-toml
+    # - id: check-yaml
+    #   args: [--allow-multiple-documents]
+    - id: end-of-file-fixer
+      exclude: ^tests/testthat/_snaps/.*$
+    - id: mixed-line-ending
+    #- id: no-commit-to-branch
+    #  args: [-p, "^(?!((release\/|bugfix\/|feature\/)?[a-z0-9]([a-z0-9]|-)*$)).*$"]
+    - id: trailing-whitespace
+      exclude: ^tests/testthat/_snaps/.*$
+    - id: check-added-large-files
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.28.0
+    hooks:
+    - id: gitleaks
+      args: [--config=.gitleaks.toml, --verbose]

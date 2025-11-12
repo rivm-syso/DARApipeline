@@ -1,0 +1,55 @@
+__defaults__:
+  skip_cache: no
+  tag: no_tag
+  type: object
+  output_formats:
+  - rds
+  output_arguments: ~
+  output_formats_custom: ~
+obj_A:
+  type: object
+  tag: t0
+obj_B:
+  type: object
+  tag: t1
+obj_C:
+  type: object
+  tag: t2
+obj_D:
+  type: object
+  tag: t2
+obj_E:
+  type: object
+  tag: t2
+obj_F:
+  type: object
+  tag: ~
+obj_G:
+  type: object
+  tag: t3
+  copy_to_file_path: tests/testthat/fixtures/data/copied/
+  overwrite: TRUE
+obj_H:
+  type: object
+  copy_to_file_path: tests/testthat/fixtures/data/copied/
+  overwrite: TRUE
+  tag: ~
+somedata:
+  type: data
+  dir_input: fixtures/data/somedata/
+staticdata:
+  type: other
+  dir_input: fixtures/data/staticdata.rds
+test_object:
+  type: object
+  output_formats: ~
+  output_formats_custom:
+    pdf: fun_pdf
+  output_arguments:
+    pdf:
+      width: 8
+      height: 6
+copy_objects:
+  tag: no_tag
+  type: other
+  output_formats: ~

@@ -1,0 +1,25 @@
+__defaults__:
+  skip_cache: no
+  tag: no_tag
+  type: object
+  output_formats: xlsx
+  output_arguments: ~
+  output_formats_custom: ~
+obj_A:
+  type: object
+  tag: t0
+obj_B:
+  type: object
+  tag: t1
+obj_C:
+  type: object
+  tag: t0
+obj_D:
+  type: object
+  tag: t1
+somedata:
+  type: data
+  dir_input: fixtures/data/somedata/
+staticdata:
+  type: other
+  dir_input: fixtures/data/staticdata.rds

@@ -1,0 +1,56 @@
+url: ~
+template:
+  bootstrap: 5
+  light-switch: true
+  bslib:
+    danger: "#A6081A"
+
+destination: public
+
+reference:
+- title: "Pipeline functions"
+  desc: >
+    The full set of functions to initialize, start, and check your pipeline.
+    Including setup_environment to interactively start a pipeline for a specific object.
+  contents:
+  - pipeline_init
+  - pipeline_run
+  - pipeline_import_for
+  - pipeline_status
+  - pipeline_vis
+  - setup_environment
+  - pipeline_render_report
+  - check_last_successful_run
+- title: "Grab functions"
+  desc: >
+    Functions to grab parameters of the current EPI pipeline,
+    such as timestamp, mount, drive name and more.
+  contents:
+  - grab_current_drive_name
+  - grab_object_table
+  - grab_run_timestamp
+  - grab_target_list
+  - grab_target_mount
+- title: "Load and save functions"
+  desc: >
+    Including functions to open database connections and get the most file path
+    for the most recent file in a given directory.
+  contents:
+  - get_sp_data
+  - load_data
+  - most_recent_file
+  - open_tbl_con
+  - save_cache
+  - save_data
+  - save_output
+- title: "Copy functions"
+  desc: >
+    Functions used to copy files and paths to and from copy locations.
+  contents:
+  - copy_asset
+  - get_copy_from_file_path
+  - get_copy_to_dir_path
+- title: "Other functions"
+  contents:
+  - idle
+  - mark_for_refresh

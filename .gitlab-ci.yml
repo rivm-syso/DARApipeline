@@ -1,0 +1,84 @@
+#### CICD for DARA packages ####
+
+variables:
+  R_LIBS: "/builds/dara/${CI_PROJECT_NAME}"
+  LINTR_ERROR_ON_LINT: true
+
+# Test our own DARA image (should be changed to shared account)
+image: daratools/darabase:latest
+
+# define cache (for package installs, reduces job time)
+cache:
+  key: cache-$CI_PIPELINE_ID
+  paths:
+    - $R_LIBS
+
+# define stages of runners
+stages:
+  - setup
+  - check
+  - test
+  - coverage
+  - pages
+
+setup_r_dependencies:
+  stage: setup
+  script:
+    - R -e 'remotes::install_gitlab("dara/DARAutils@main", host = Sys.getenv("GITLAB_HOST"))' # Note this should be moved to image when on CRAN
+    - R -e 'devtools::install_deps(dependencies = TRUE, repos = "http://cran.r-project.org", upgrade = "never")'
+  artifacts:
+      paths:
+        - $R_LIBS
+      exclude:
+        - .git/**/*  # Exclude all git-related files
+        - .git/      # Explicitly exclude .git directory
+        - .gitignore # Exclude gitignore file
+        - .gitlab-ci.yml  # Exclude CI config
+
+run_checks:
+  stage: check
+  dependencies:
+    - setup_r_dependencies
+  script:
+    - R -e 'devtools::check(error_on = "warning", cran = FALSE, args = c("--no-tests"))'
+
+run_lint:
+  stage: check
+  script:
+    - Rscript -e 'lintr::lint_package()'
+
+run_unittests:
+  stage: test
+  dependencies:
+    - setup_r_dependencies
+  script:
+    - R -e 'devtools::test(stop_on_failure = TRUE)'
+
+run_coverage:
+  stage: coverage
+  dependencies:
+    - setup_r_dependencies
+  script:
+    - R -e 'covr::package_coverage(path = ".")'
+  coverage: '/Coverage: \d+(?:\.\d+)?/'
+
+pages:
+  stage: pages
+  script:
+     - |
+      R -e '
+      devtools::document()
+      pkgdown::build_site()
+      install.packages(c("covr", "DT"))
+      covr::gitlab(quiet = FALSE)
+      '
+  artifacts:
+    paths:
+    - public
+    exclude:
+      - .git/**/*  # Exclude all git-related files
+      - .git/      # Explicitly exclude .git directory
+      - .gitignore # Exclude gitignore file
+      - .gitlab-ci.yml  # Exclude CI config
+  only:
+     - main

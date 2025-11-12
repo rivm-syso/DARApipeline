@@ -1,0 +1,12 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
+^LICENSE\.md$
+^\.gitlab-ci\.yml$
+.lintr
+^\.github$
+^\.pre-commit-config\.yaml$
+^doc$
+^Meta$
