@@ -1,3 +1,34 @@
+# DARApipeline v0.8.0
+26-02-2026
+
+### :sparkles: Added
+- Deploy DARApipeline on RIVM Syso Github
+- Added the function `check_most_recent_data`, which prints the runtime stamp of the most recent data file
+ and errors if the data is older than the specified time window in days (#143).
+
+### :hammer_and_wrench: Changed
+- Changed the CICD Rpackage setup. Now it first scans the known libpaths (including
+the docker image), before installing missing packages.
+This results in a faster CICD-pipeline runtime. (#174).
+
+### :bug: Fixed
+- Commented object names are no longer flagged by check_dependencies_not_listed 
+function (#181).
+
+- All config checks now give warnings instead of errors and an empty config should 
+not result in an error(#177).
+
+### :coffin: Deprecated
+
+# DARApipeline v0.7.2
+18-11-2025
+
+### :bug: Fixed
+- Fixed wrong missing dependencies are returned from `check_usage_dependencies()` 
+and `check_dependencies_not_listed()` in `setup_environment()` when two names of 
+dependencies partly overlap (#172)
+
+
 # DARApipeline v0.7.1
 30-10-2025
 

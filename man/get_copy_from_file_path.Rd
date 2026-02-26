@@ -17,6 +17,9 @@ get_copy_from_file_path(
 \item{p_e}{For internal use. The hidden pipeline state environment.}
 
 \item{call}{For internal use. Used for error tracing.}
+
+\item{test_mode}{For internal use. Boolean to inject \code{test_path()}
+into file paths for testing purposes. Default = FALSE}
 }
 \value{
 string with filepath to copy from

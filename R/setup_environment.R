@@ -94,8 +94,7 @@ setup_environment <- function(cur_env,
 #' @keywords internal
 #' @md
 #'
-check_usage_dependencies <- function(object_name, p_e = pipeline_env) {
-
+check_usage_dependencies <- function(object_name, p_e = pipeline_env, test_mode = FALSE) {
   depends_on <- get_depends_on_list(object_name)
 
   # if there are no dependencies, don't continue the check (invisible early return)
@@ -103,11 +102,19 @@ check_usage_dependencies <- function(object_name, p_e = pipeline_env) {
     return(invisible(NULL))
   }
 
-  script_loc <- p_e$object_param_list[[object_name]]$generate_script
+
+  if (test_mode) {
+    print("testmode added")
+    script_loc <- testthat::test_path(p_e$object_param_list[[object_name]]$generate_script)
+  } else {
+    script_loc <- p_e$object_param_list[[object_name]]$generate_script
+  }
+
   script_str <- read_file(script_loc)
 
   for (dep in depends_on){
-    if (!str_detect(script_str, dep)) {
+    dep_exact <- paste0("\\b", dep, "\\b")
+    if (!str_detect(string = script_str, pattern = dep_exact)) {
       cli_warn(c(
         "!" = "{.arg object_name} {.val {object_name}} depends on {.val {dep}}, as stated in the
         {.file config/base/object_relations.yaml} file, but it is never used in the object generate script:
@@ -137,20 +144,25 @@ check_usage_dependencies <- function(object_name, p_e = pipeline_env) {
 #' @keywords internal
 #' @md
 #'
-check_dependencies_not_listed <- function(object_name, p_e = pipeline_env) {
+check_dependencies_not_listed <- function(object_name, p_e = pipeline_env, test_mode = FALSE) {
   depends_on <- get_depends_on_list(object_name)
   # get names of all unique data assets mentioned in the config relations yaml
   all_data_assets <- grab_object_table() |>
-    pull(data_asset_name)
+    pull(.data$data_asset_name)
   # get the data assets mentioned in the config without those mentioned in the
   # depends_on and the object_name of the current object
   diff_data_assets <- setdiff(all_data_assets, c(object_name, depends_on))
 
   script_loc <- p_e$object_param_list[[object_name]]$generate_script
-  script_str <- read_file(script_loc)
 
+  if (test_mode) {
+    script_str <- read_file(testthat::test_path(script_loc))
+  } else {
+    script_str <- read_file(script_loc)
+  }
   for (data_asset in diff_data_assets) {
-    if (str_detect(script_str, data_asset)) {
+    data_asset_exact <- paste0("\\b", data_asset, "\\b")
+    if (str_detect(string = remove_comments(script_str), pattern = data_asset_exact)) {
       cli_warn(
         c(
           "!" = "{.arg object_name} uses {.val {data_asset}} in the object generate script:{.file {script_loc}}
@@ -178,8 +190,8 @@ check_dependencies_not_listed <- function(object_name, p_e = pipeline_env) {
 #'
 get_depends_on_list <- function(object_name) {
   grab_object_table() |>
-    filter(data_asset_name == object_name) |>
-    pull(depends_on) |>
+    filter(.data$data_asset_name == object_name) |>
+    pull(.data$depends_on) |>
     unlist() |>
     unique()
 }

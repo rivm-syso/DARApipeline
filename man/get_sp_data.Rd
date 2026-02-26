@@ -8,7 +8,7 @@ modification date}
 get_sp_data(
   con_specs,
   start_date = "19000101",
-  end_date = run_timestamp,
+  end_date = grab_run_timestamp(),
   answer_format = c("text", "code", "both")
 )
 }

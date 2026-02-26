@@ -20,13 +20,13 @@ knitr::opts_chunk$set(
 
 ### Introduction
 Some pipelines require data to be placed in multiple locations after creation.
-The updated version off `copy_asset()` function allows users to automate and streamline this process.
+The updated version of the `copy_asset()` function allows users to automate and streamline this process.
 
 To use this functionality, users need add both the `copy_asset()` to their pipeline and add a new parameter to their `object_definitions.yaml` file. The parameter is `copy_to_file_path`, which specifies the destination path for the copied asset. This will be explained further in the examples below.
 
 The main reason this parameter was added to the config instead of the function is that it allows the user for a simpler change of location: instead of looking for all instances of `copy_asset()` in the pipeline code, the user can simply define a new path in the config.
 
-Below we will show a basic and advanced example of how to use the `copy_asset()` function along with some tips and tricks. This functionality will also be added to the cookciecutter templates, making it easier to copy the method.
+Below we will show a basic and advanced example of how to use the `copy_asset()` function along with some tips and tricks.
 
 ### Basic example
 The following example shows a basic use case of the `copy_asset()` function.
@@ -102,7 +102,7 @@ map_cov_incidence_mun:
 ### Other
 **Renaming the copied objects.**
 We purposely did not add functionality to rename the copied objects during the copy process. The main reason for this is clarity where objects got copied from or to and to avoid confusion.
-If renaming a object is needed, this can be done manually or using other functions such as `file.rename()` after the copy process.
+If renaming an object is needed, this can be done manually or using other functions such as `file.rename()` after the copy process.
 
 **Copying a single object to multiple locations.**
 This functionality has not been added yet and will be considered in later updates.

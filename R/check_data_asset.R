@@ -20,8 +20,8 @@
 check_data_asset <- function(data_assets, types, p_e, call = parent.frame()) {
   object_table <- grab_object_table(p_e = p_e, call = call)
   all_data_assets_oftype <- object_table |>
-    filter(type %in% types) |>
-    pull(data_asset_name)
+    filter(.data$type %in% types) |>
+    pull(.data$data_asset_name)
 
   data_assets_invalid <- setdiff(data_assets, all_data_assets_oftype)
   if (length(data_assets_invalid)) {

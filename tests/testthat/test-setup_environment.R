@@ -39,36 +39,50 @@ test_that("setup_environment() works under normal circumstances, when run intera
 
   # We also have to mock interactive for this test - set to TRUE
   mockery::stub(setup_environment, "interactive", TRUE)
-
   cur_env <- .GlobalEnv
 
   # Expect no error
   expect_invisible(setup_environment(cur_env = cur_env,
                                      prepare_script = test_path(prepare_script),
                                      p_e = p_e))
-}
-)
+})
 
 test_that("check_usage_dependencies only warns when config dependencies are not used in object", {
   local_logger_sink()
   run_timestamp <- "20000101_1010"
-  setup_pipeline_init(run_timestamp = run_timestamp, config_folder = "config_3")
+
+  withr::local_options(list(
+    DARApipeline.configdir = test_path("fixtures", "configs", "config_3"),
+    DARApipeline.skiplogging = TRUE
+  ))
+
+  pipeline_init(run_timestamp = run_timestamp)
 
   # obj_A uses all dependencies
-  testthat::expect_no_warning(check_usage_dependencies("obj_A"))
-
-  # for obj_C, the dependency abj_A is never used in the script
-  testthat::expect_warning(check_usage_dependencies("obj_C"), "it is never used in the object generate script")
+  testthat::expect_no_warning(check_usage_dependencies("obj_A", test_mode = TRUE))
+  # for obj_C, the dependency obj_A is never used in the script
+  testthat::expect_warning(check_usage_dependencies("obj_C", test_mode = TRUE),
+                           "it is never used in the object generate script")
 })
 
 test_that("check_dependencies_not_listed only warns when config dependencies are not listed in object", {
   local_logger_sink()
   run_timestamp <- "20000101_1010"
-  setup_pipeline_init(run_timestamp = run_timestamp, config_folder = "config_3")
+
+  withr::local_options(list(
+    DARApipeline.configdir = test_path("fixtures", "configs", "config_3"),
+    DARApipeline.skiplogging = TRUE
+  ))
+  pipeline_init(run_timestamp = run_timestamp)
 
   # obj_A uses all dependencies
-  testthat::expect_no_warning(check_dependencies_not_listed("obj_A"))
+  testthat::expect_no_warning(check_dependencies_not_listed("obj_A", test_mode = TRUE))
 
   # for obj_C, the dependency abj_A is never used in the script
-  testthat::expect_warning(check_dependencies_not_listed("obj_E"), "but this is not stated in the")
+  testthat::expect_warning(check_dependencies_not_listed("obj_E", test_mode = TRUE), "but this is not stated in the")
+
+  # for obj_B, object obj_A is commented in the script file
+  # This means it should be negated and give no warnings if commented code is not in config
+  testthat::expect_no_warning(check_dependencies_not_listed("obj_B",
+                                                            test_mode = TRUE))
 })

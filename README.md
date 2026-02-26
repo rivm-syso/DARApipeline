@@ -1,10 +1,6 @@
 # DARApipeline
 
-![ci status](https://gitlab.rivm.nl/dara/DARApipeline/badges/develop/pipeline.svg)
-![coverage](https://gitlab.rivm.nl/dara/DARApipeline/badges/develop/coverage.svg)
-
 ## Tools To Run Your EPI Pipelines
-
 
 ## Overview
 DARApipeline (part of [DARAtools](https://gitlab.rivm.nl/dara/DARAtools)) is a R-package that
@@ -44,8 +40,23 @@ remotes::install_gitlab("dara/DARApipeline@develop", host = "https://gitlab.rivm
 
 ### From RIVM-syso GitHub
 
-*Installation via Github*
-Will be added in the near future.
+To install DARApipeline from GitHub, first install the graph package by running:
+
+``` r
+if (!requireNamespace("BiocManager", quietly = TRUE)) {
+  install.packages("BiocManager")
+}
+BiocManager::install("graph")
+```
+
+You can now download the latest version of DARApipeline via GitHub using the remotes package:
+
+``` r
+if (!requireNamespace("remotes", quietly = TRUE)) {
+  install.packages("remotes")
+}
+remotes::install_github("rivm-syso/DARApipeline@main", build = FALSE")
+```
 
 ### From CRAN
 
@@ -72,14 +83,46 @@ For detailed documentation, use:
 ?check_data_asset
 ```
 
-First point of contact for questions: DARAteam ([dara-team-list\@rivm.nl](mailto:dara-team-list@rivm.nl){.email}).
+First point of contact for questions: DARAteam ([epi-dara\@rivm.nl](mailto:epi-dara@rivm.nl){.email}).
 
-Please report an DARApipeline issue at [GitLab issues](https://gitlab.rivm.nl/dara/DARApipeline/-/issues).
+Please report a DARApipeline issue at [GitLab issues](https://gitlab.rivm.nl/dara/DARApipeline/-/issues).
 
 ## Authors and acknowledgment
 
-This R package was created by the DARA team (RIVM/CiB/EPI in department DIS).
+This R package was created by the DARA team (RIVM/CIb/EPI in department DIS).
 
 ## License
 
 The code can be re-used under license [EUPL v.1.2](https://eupl.eu/1.2/en/).
+
+## Code of Conduct
+
+We want to create a welcoming and respectful environment for everyone.
+
+- Be kind and respectful to others.
+- Do not use offensive or inappropriate language.
+- Respect differences in opinion, experience, and background.
+- If you experience or witness unacceptable behavior, please report it by contacting the maintainers at epi-dara@rivm.nl.
+
+## Disclaimer
+
+This R package was originally developed to meet the specific needs of the EPI (Epidemiology & Surveillance) department
+within the CIb (Centre for Infectious Disease Control) at the RIVM. However, it is made openly available to all
+RIVM employees who may find it useful for their work. While we welcome and encourage feedback from users
+outside the EPI department, please note that the package's primary development focus remains
+aligned with the needs of its original user base.
+
+We strive to ensure that the package is reliable and effective for its intended purposes, but we cannot guarantee
+that every feature or functionality will fully meet the requirements of your specific use case. Additionally, while
+we appreciate all suggestions and feedback, we cannot guarantee that we will have the time or resources to incorporate
+every requested feature or fix into future updates.
+
+This package is provided "as is", without any express or implied warranties of accuracy, completeness, fitness for a
+particular purpose, or non-infringement. Use of the package, and interpretation of its results, is at your own risk.
+We encourage users to validate outputs thoroughly before applying them in critical contexts.
+
+If you encounter issues, have suggestions, or wish to share feedback, please report them via the package's
+GitHub issue board or by contacting the package maintainer(s):
+DARAteam (epi-dara@rivm.nl). Your input is highly valuable
+and helps us improve the package for all users.
+Thank you for your understanding and cooperation!

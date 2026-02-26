@@ -61,6 +61,8 @@ copy_asset <- function(data_asset_name, p_e = pipeline_env, call = parent.frame(
 #' @param data_asset_name Character.
 #' @param p_e  For internal use. The hidden pipeline state environment.
 #' @param call For internal use. Used for error tracing.
+#' @param test_mode For internal use. Boolean to inject `test_path()`
+#'                  into file paths for testing purposes. Default = FALSE
 #'
 #' @returns string with filepath to copy from
 #'
@@ -82,7 +84,7 @@ get_copy_from_file_path <- function(data_asset_name, p_e, call = parent.frame(),
 
   if (test_mode) {
     log_info("{.var TEST mode} is {.val Enabled}: injecting {.val test_path()} into {.var from_dir_path}...")
-    from_dir_path <- test_path(from_dir_path)
+    from_dir_path <- testthat::test_path(from_dir_path)
   }
 
   # Extra try catch to update `most_recent_file` error message for `copy_asset` run.

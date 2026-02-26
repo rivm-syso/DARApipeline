@@ -1,11 +1,11 @@
 # Create path for log
 path_log <- sprintf(
-  "fixtures/scripts/setup_environment_test_objects/%s/%s/%s_%s.log",
+  "fixtures/scripts/setup_env/%s/%s/%s_%s.log",
   "logs",
   format(Sys.time(), "%Y%m"),
   # year-month
   format(Sys.time(), "%Y%m%d_%H%M"),
-  "datasource-cookiecutter"
+  "ds-cc"
 )
 
 # Create log directory

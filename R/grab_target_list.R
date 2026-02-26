@@ -28,15 +28,15 @@ grab_target_list <- function(tags = NULL, objects = NULL, ..., p_e = pipeline_en
 
   object_table <- grab_object_table(p_e = p_e, call = call)
   all_tags <- object_table |>
-    pull(tag) |>
+    pull(.data$tag) |>
     unique()
 
   if (is.null(tags) && is.null(objects)) {
     # if no tags/objects filter given: NULL means all objects
     all_objects <- object_table |>
-      filter(type == "object") |>
-      arrange(hierarchy_level) |>
-      pull(data_asset_name)
+      filter(.data$type == "object") |>
+      arrange(.data$hierarchy_level) |>
+      pull(.data$data_asset_name)
     return(all_objects)
   }
 
@@ -47,8 +47,8 @@ grab_target_list <- function(tags = NULL, objects = NULL, ..., p_e = pipeline_en
   } else {
     check_tags(tags, p_e = p_e, call = call)
     targets_tags <- object_table |>
-      filter(tag %in% tags) |>
-      pull(data_asset_name)
+      filter(.data$tag %in% tags) |>
+      pull(.data$data_asset_name)
   }
 
   # targets by objects filter
@@ -68,11 +68,11 @@ grab_target_list <- function(tags = NULL, objects = NULL, ..., p_e = pipeline_en
   # keep only objects
   object_table |>
     filter(
-      data_asset_name %in% c(targets, targets_indirect),
-      type == "object"
+      .data$data_asset_name %in% c(targets, targets_indirect),
+      .data$type == "object"
     ) |>
-    arrange(hierarchy_level) |>
-    pull(data_asset_name)
+    arrange(.data$hierarchy_level) |>
+    pull(.data$data_asset_name)
 }
 
 ### Helper functions -----------------------------------------------------------
@@ -91,7 +91,7 @@ grab_target_list <- function(tags = NULL, objects = NULL, ..., p_e = pipeline_en
 check_tags <- function(tags, p_e, call = parent.frame()) {
   object_table <- grab_object_table(p_e = p_e, call = call)
   all_tags <- object_table |>
-    pull(tag) |>
+    pull(.data$tag) |>
     unique()
 
   tags_invalid <- setdiff(tags, all_tags)

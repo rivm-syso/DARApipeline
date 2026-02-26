@@ -19,8 +19,8 @@ pipeline_import_for <- function(data_assets, ..., p_e = pipeline_env, call = par
   check_data_asset(data_assets, c("object", "other"), p_e = p_e, call = call)
 
   depends_on <- grab_object_table() |>
-    filter(data_asset_name %in% data_assets) |>
-    pull(depends_on) |>
+    filter(.data$data_asset_name %in% data_assets) |>
+    pull(.data$depends_on) |>
     unlist() |>
     unique()
 

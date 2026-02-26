@@ -49,7 +49,7 @@ pipeline_status <- function(..., p_e = pipeline_env) {
            (Run {.run DARApipeline::grab_object_table()}}")
 
   n_generated <- object_table |>
-    filter(type == "object", is_generated) |>
+    filter(.data$type == "object", .data$is_generated) |>
     nrow()
   log_info("{n_generated} out of {n_object} object{?s} {?has/have} been generated so far.")
 

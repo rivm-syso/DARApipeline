@@ -80,8 +80,8 @@ pipeline_render_report <- function(markdown_file,
     if (custom_output_path == "") {
       html_path <- file.path(WD,
         grab_object_table() |>
-          filter(tag == "html") |>
-          pull(dir_html)
+          filter(.data$tag == "html") |>
+          pull(.data$dir_html)
       )
     } else {
       # Check if the user provided a relative or absolute custom output path

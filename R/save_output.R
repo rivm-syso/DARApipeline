@@ -41,12 +41,12 @@ save_output <- function(
     output_formats,
     output_formats_custom = list(),
     output_arguments = list()) {
-  if (!missing(output_formats)) {
+  if (!(missing(output_formats) || all(is.na(output_formats)))) {
     # default list of save functions
     default_save_funcs <- list(
       csv = write_csv2,
       png = function(object, bestand, ...) {
-        save_image(object, bestand, device = png, ...) # Here, the device *function* 'png'
+        save_image(object, bestand, device = grDevices::png, ...) # Here, the device *function* 'png'
       },
       svg = function(object, bestand, ...) {
         save_image(object, bestand, device = "svg", ...) # Here, the *string* 'svg'

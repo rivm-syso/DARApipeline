@@ -10,11 +10,9 @@ grab_object_cache(object_name, ..., p_e = pipeline_env, call = parent.frame())
 \item{p_e}{Object: package_environment, internal - do not use}
 
 \item{call}{Object: the parent environment from return_env, internal - do not use}
-
-\item{dir_config}{Path: to directory which holds the configuration files.}
 }
 \description{
 Function grabs the cache path from the object_table in the pipeline_env. Especially
-useful when the cache file differs from the standard format cache/{RUN_TIMESTAMP}
+useful when the cache file differs from the standard format cache/\{RUN_TIMESTAMP\}
 }
 \keyword{internal}

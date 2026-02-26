@@ -1,7 +1,7 @@
 #### CICD for DARA packages ####
 
 variables:
-  R_LIBS: "/builds/dara/${CI_PROJECT_NAME}"
+  R_LIBS_USER: "${CI_PROJECT_DIR}/Rlib"
   LINTR_ERROR_ON_LINT: true
 
 # Test our own DARA image (should be changed to shared account)
@@ -11,7 +11,7 @@ image: daratools/darabase:latest
 cache:
   key: cache-$CI_PIPELINE_ID
   paths:
-    - $R_LIBS
+    - $R_LIBS_USER
 
 # define stages of runners
 stages:
@@ -19,33 +19,44 @@ stages:
   - check
   - test
   - coverage
-  - pages
+  - deploy
 
 setup_r_dependencies:
   stage: setup
   script:
-    - R -e 'remotes::install_gitlab("dara/DARAutils@main", host = Sys.getenv("GITLAB_HOST"))' # Note this should be moved to image when on CRAN
+    - mkdir -p "$R_LIBS_USER" && cd "$R_LIBS_USER"
+    - R -e 'remotes::install_gitlab("dara/DARAutils@main", lib = ".", host = Sys.getenv("GITLAB_HOST"))' # Note this should be moved to image when on CRAN
     - R -e 'devtools::install_deps(dependencies = TRUE, repos = "http://cran.r-project.org", upgrade = "never")'
   artifacts:
       paths:
-        - $R_LIBS
+        - $R_LIBS_USER
       exclude:
         - .git/**/*  # Exclude all git-related files
         - .git/      # Explicitly exclude .git directory
         - .gitignore # Exclude gitignore file
         - .gitlab-ci.yml  # Exclude CI config
+  rules:
+    - when: on_success
 
 run_checks:
   stage: check
   dependencies:
     - setup_r_dependencies
   script:
-    - R -e 'devtools::check(error_on = "warning", cran = FALSE, args = c("--no-tests"))'
+    - R -e 'devtools::check(error_on = "note", cran = FALSE, args = c("--no-tests"))'
+  rules:
+    - if: '$CI_COMMIT_MESSAGE =~ /\[\s*fast CI\s*\]/'
+      when: never
+    - when: on_success
 
 run_lint:
   stage: check
   script:
     - Rscript -e 'lintr::lint_package()'
+  rules:
+    - if: '$CI_COMMIT_MESSAGE =~ /\[\s*fast CI\s*\]/'
+      when: never
+    - when: on_success
 
 run_unittests:
   stage: test
@@ -53,6 +64,10 @@ run_unittests:
     - setup_r_dependencies
   script:
     - R -e 'devtools::test(stop_on_failure = TRUE)'
+  rules:
+    - if: '$CI_COMMIT_MESSAGE =~ /\[\s*fast CI\s*\]/'
+      when: never
+    - when: on_success
 
 run_coverage:
   stage: coverage
@@ -61,9 +76,13 @@ run_coverage:
   script:
     - R -e 'covr::package_coverage(path = ".")'
   coverage: '/Coverage: \d+(?:\.\d+)?/'
+  rules:
+    - if: '$CI_COMMIT_MESSAGE =~ /\[\s*fast CI\s*\]/'
+      when: never
+    - when: on_success
 
 pages:
-  stage: pages
+  stage: deploy
   script:
      - |
       R -e '
@@ -80,5 +99,94 @@ pages:
       - .git/      # Explicitly exclude .git directory
       - .gitignore # Exclude gitignore file
       - .gitlab-ci.yml  # Exclude CI config
-  only:
-     - main
+  rules:
+    - if: '$CI_COMMIT_MESSAGE =~ /\[\s*fast CI\s*\]/'
+      when: never
+    - if: '$CI_COMMIT_BRANCH == "main"'
+      when: on_success
+    - when: never
+
+mirror_main_to_github:
+  stage: deploy
+  script:
+    # Set CI username
+    - git config --global user.name "GitLab CI"
+    - git config --global user.email "ci@gitlab.com"
+
+    # Setup SSH for GitHub
+    - mkdir -p ~/.ssh
+    - echo "$GITHUB_DEPLOY_KEY" > ~/.ssh/id_ed25519
+    - chmod 600 ~/.ssh/id_ed25519
+    - ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+    # # Clone GitHub repo
+    - git clone git@github.com:rivm-syso/$GITHUB_REPO.git --tags github_repo
+    - cd github_repo
+
+    # Copy fresh snapshot from GitLab (without its .git)
+    - mkdir ../snapshot
+    - git clone --branch=main --depth=1 "$CI_REPOSITORY_URL" ../snapshot
+    - rsync -a --delete --exclude='.git' ../snapshot/ .
+
+    # Stage and commit snapshot only when changes are found
+    - git add .
+    - |
+      if ! git diff --cached --quiet; then
+        git commit -m "Mirrored snapshot $CI_COMMIT_TAG from GitLab"
+      else
+        echo "=== !!! No changes to commit !!! ==="
+      fi
+
+    # Tag if applicable
+    - |
+      if [ -n "$CI_COMMIT_TAG" ]; then
+        git tag -f "$CI_COMMIT_TAG"
+      fi
+
+    # Push snapshot and tags to GitHub
+    - git push --force origin main
+    - git push origin --tags
+
+  rules:
+    # Skip if [clean GH] is in the commit message (highest priority)
+    - if: '$CI_COMMIT_MESSAGE =~ /(?i)\[\s*clean GH\s*\]/'
+      when: never
+    - if: '$CI_COMMIT_TAG =~ /^v\d+\.\d+\.\d+$/'
+      when: on_success
+    - when: never
+
+
+overwrite_mirror_main_to_github:
+  stage: deploy
+  script:
+    # Set CI username
+    - git config --global user.name "GitLab CI"
+    - git config --global user.email "ci@gitlab.com"
+
+    # Setup SSH for GitHub
+    - mkdir -p ~/.ssh
+    - echo "$GITHUB_DEPLOY_KEY" > ~/.ssh/id_ed25519
+    - chmod 600 ~/.ssh/id_ed25519
+    - ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+    # Clone only main and tags to temp repo
+    - git clone --branch=main --depth=1 --single-branch --tags "$CI_REPOSITORY_URL" repo
+    - cd repo
+
+    # Temp, clean git instance. # TBR
+    - rm -rf .git
+    # Re-init new git repo
+    - git init
+    - git branch -M main
+
+    - git remote add github git@github.com:rivm-syso/$GITHUB_REPO.git
+
+    - git add .
+    - git commit -m "Mirrored main branch from GitLab at $CI_JOB_STARTED_AT"
+    - git push --force github main:main
+
+  rules:
+    # Skip if [clean GH] is in the commit message (highest priority)
+    - if: '$CI_COMMIT_MESSAGE =~ /(?i)\[\s*clean GH\s*\]/'
+      when: on_success
+    - when: never

@@ -50,7 +50,7 @@
 get_sp_data <-
   function(con_specs,
            start_date = "19000101",
-           end_date = run_timestamp,
+           end_date = grab_run_timestamp(),
            answer_format = c("text", "code", "both")) {
     # function to connect to store procedure table and collect
     # it depends on  get_sp_data_parse_date, get_sp_data_argcheck,open_con and open_sp
@@ -97,17 +97,17 @@ get_sp_data <-
     sp_data_pivot <- sp_data |>
       pivot_wider(
         id_cols = all_of(cols_id),
-        names_from = vraag_code,
+        names_from = .data$vraag_code,
         values_from = value_vector,
         names_glue = "{vraag_code}_{.value}"
       ) |>
       rename_with(.cols = ends_with(value_vector),
-                  .fn = ~ str_replace_all(.,
+                  .fn = ~ str_replace_all(.data,
                                           c(
                                             "antwoord_code" = "code", "antwoord_tekst" = "text"
                                           ))) |>
       select(all_of(cols_id),
-             sort(colnames(.)))
+             sort(colnames(.data)))
 
     log_info("Finished with {.val {con_specs$name}}")
 
@@ -227,7 +227,7 @@ get_sp_data_argcheck <- function(con_specs, call = parent.frame()) {
   }
 
   # Error message when the data name is missing or is not a character
-  if (length(con_specs$name) != 1 || class(con_specs$name) != "character") {
+  if (length(con_specs$name) != 1 || inherits(con_specs$name, "character")) {
     cli_abort(c(
       "con_specs$name should be given in [con_specs] as a character of length 1!"
     ),

@@ -108,6 +108,12 @@ save_data <- function(object,
   }
 
   log_info("Saving: {.arg {object_name}} --> {.file {file_name_full}}")
+
+  # give current run_timestamp as attribute to object
+  if (exists("run_timestamp")) {
+    attr(object, "run_timestamp") <- run_timestamp
+  }
+
   do.call(save_function, c(list(object, file_name_full), save_function_options))
   return(invisible(NULL))
 }

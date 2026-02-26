@@ -33,10 +33,10 @@ pipeline_vis <- function(..., p_e = pipeline_env) {
 
   graph_outputs_visnetwork$nodes <- graph_outputs_visnetwork$nodes |>
     left_join(
-      grab_object_table() |> select(label = data_asset_name, data_type = type, tag),
+      grab_object_table() |> select(label = "data_asset_name", data_type = "type", "tag"),
       by = "label"
     ) |>
-    mutate(tag = replace_na(tag, "<NA>"))
+    mutate(tag = replace_na(.data$tag, "<NA>"))
 
   # coloring is done by tag
   n_clrs <- n_distinct(graph_outputs_visnetwork$nodes$tag)
@@ -82,25 +82,25 @@ pipeline_vis <- function(..., p_e = pipeline_env) {
   # clean up nodes and edge data
   d_nodes <- graph_outputs_visnetwork$nodes |>
     mutate(
-      color = clrs[tag],
-      shape = c("square", "dot", "diamond")[as.factor(data_type)],
-      title = sprintf("%s<br>type:%s<br>tag:%s", id, data_type, tag),
-      label = id,
-      level = -hierarchy_level # flipped
+      color = clrs[.data$tag],
+      shape = c("square", "dot", "diamond")[as.factor(.data$data_type)],
+      title = sprintf("%s<br>type:%s<br>tag:%s", .data$id, .data$data_type, .data$tag),
+      label = .data$id,
+      level = -.data$hierarchy_level # flipped
     ) |>
-    arrange(hierarchy_level, tag, data_type) |>
-    select(id, level, color, title, label, shape, tag)
+    arrange("hierarchy_level", "tag", "data_type") |>
+    select("id", "level", "color", "title", "label", "shape", "tag")
 
   if (nrow(graph_outputs_visnetwork$edges) > 0) {
     d_edges <- graph_outputs_visnetwork$edges |>
       left_join(d_nodes |>
-                  select(from = id, tag, color), by = "from") |>
-      mutate(title = tag |>
+                  select(from = "id", "tag", "color"), by = "from") |>
+      mutate(title = .data$tag |>
                as.factor()) |>
-      select(from,
-             to,
-             color,
-             title)
+      select("from",
+             "to",
+             "color",
+             "title")
   } else {
     d_edges <- graph_outputs_visnetwork$edges
   }

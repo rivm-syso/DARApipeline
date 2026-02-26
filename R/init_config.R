@@ -43,9 +43,9 @@ init_config <- function(dir_config, p_e, .call = parent.frame()) {
   }
 
   # checks and load config yamls
-  conf_paths <- conf_check_load_proj_paths(file_paths)
-  conf_relations <- conf_check_load_relations(file_relations)
-  conf_definitions <- conf_check_load_definitions(file_definitions)
+  conf_paths <- conf_check_load_proj_paths(f = file_paths)
+  conf_relations <- conf_check_load_relations(f = file_relations)
+  conf_definitions <- conf_check_load_definitions(f = file_definitions)
 
   # all objects in the project
   all_objects <- conf_get_all_objects(conf_relations, conf_definitions)
@@ -69,6 +69,26 @@ init_config <- function(dir_config, p_e, .call = parent.frame()) {
 
 ### Helper functions -----------------------------------------------------------
 
+#' @title read non empty conf
+#' @description
+#' Helper function to read in a config if not empty
+#'
+#' @param f file location of config file
+#' @param cli_f cli function to either warn or abort
+#' @param .call Object: the parent environment from return_env, internal - do not use
+#'
+#' @returns NULL
+#' @keywords internal
+#'
+read_non_empty_conf <- function(f, cli_f, .call = parent.frame()) {
+  # check config not empty
+  y <- read_yaml(f)
+  if (file.info(f)$size == 0 || is.null(y) || (is.list(y) && length(y) == 0)) {
+    cli_f(c("!" = "Config file {.file {f}} is empty! Can't interpret pipeline config."), call = .call)
+  }
+  return(y)
+}
+
 #' @title Check and load project paths
 #' @description
 #' Helper function to read project paths
@@ -81,15 +101,15 @@ init_config <- function(dir_config, p_e, .call = parent.frame()) {
 #' @keywords internal
 #'
 conf_check_load_proj_paths <- function(f, .call = parent.frame()) {
-  conf <- read_yaml(f)
-
-  conf_check_empty(conf)
+  conf <- read_non_empty_conf(f = f, cli_f = cli_warn)
 
   # check index names file_paths
   indexes_file_paths <- c("dir_outputs", "dir_scripts")
   if (grepl("file_paths.yaml$", f) &&
-        !all(indexes_file_paths %in% names(conf))) {
-    cli_abort(
+        !all(indexes_file_paths %in% names(conf)) &&
+        # if conf is null conf_check_empty() already gives a warning
+        !is.null(conf)) {
+    cli_warn(
       c("!" = "Not all expected indexes found in {.file {f}}! Can't interpret pipeline config.",
         "i" = "The following indexes are needed: {indexes_file_paths}"),
       call = .call
@@ -109,7 +129,7 @@ conf_check_load_proj_paths <- function(f, .call = parent.frame()) {
 #' @keywords internal
 #'
 conf_check_load_relations <- function(f, .call = parent.frame()) {
-  read_yaml(f)
+  read_non_empty_conf(f = f, cli_f = cli_warn)
 }
 
 #' @title check and load definitions
@@ -123,15 +143,15 @@ conf_check_load_relations <- function(f, .call = parent.frame()) {
 #' @keywords internal
 #'
 conf_check_load_definitions <- function(f, .call = parent.frame()) {
-  conf <- read_yaml(f)
-
-  conf_check_empty(conf = conf)
+  conf <- read_non_empty_conf(f = f, cli_f = cli_abort)
 
   # check index names object_definitions
   indexes_object_definitions <- c("__defaults__")
   if (grepl("object_definitions.yaml$", f) &&
-        !all(indexes_object_definitions %in% names(conf))) {
-    cli_abort(
+        !all(indexes_object_definitions %in% names(conf)) &&
+        # if conf is null conf_check_empty() already gives a warning
+        !is.null(conf)) {
+    cli_warn(
       c("!" = "Not all expected indexes found in {.file {f}}! Can't interpret pipeline config.",
         "i" = "The following index is needed: {indexes_object_definitions}"),
       call = .call
@@ -140,24 +160,6 @@ conf_check_load_definitions <- function(f, .call = parent.frame()) {
   return(conf)
 }
 
-#' @title check config empty
-#' @description
-#' Helper function to check if config is empty
-#'
-#' @param conf loaded config file
-#' @param .call Object: the parent environment from return_env, internal - do not use
-#'
-#' @returns NULL
-#' @keywords internal
-#'
-conf_check_empty <- function(conf = conf, .call = parent.frame()) {
-  # check config not empty
-  if (is.null(conf)) {
-    cli_abort(c("!" = "Config file  {.file {f}} is empty! Can't interpret pipeline config."),
-              call = .call)
-  }
-  return(invisible(NULL))
-}
 #' @title Get all objects
 #' @description
 #' Helper function to get all objects
@@ -200,7 +202,7 @@ conf_register_object <- function(
     p_e = pipeline_env,
     .call = parent.frame()) {
   if (is.null(conf_definitions[["__defaults__"]])) {
-    cli_abort(c(
+    cli_warn(c(
       "!" = "No default params found for proj_definitions",
       "i" = "Provide an object named {.val __defaults__} to set default parameters across all objects."
     ))
@@ -277,7 +279,7 @@ conf_register_object <- function(
 conf_create_dag <- function(conf_relations, all_objects, call = parent.frame()) {
   if (!is.null(conf_relations)) {
     gr <- tibble(to = names(conf_relations), from = conf_relations) |>
-      unnest_longer(from) |>
+      unnest_longer("from") |>
       graph_from_data_frame(vertices = all_objects)
   } else {
     gr <- tibble(to = all_objects, from = all_objects) |>

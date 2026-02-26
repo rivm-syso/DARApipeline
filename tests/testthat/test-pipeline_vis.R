@@ -10,10 +10,8 @@ test_that("pipeline_vis success", {
 
 test_that("pipeline_vis error", {
   local_logger_sink()
-  setup_pipeline_init(config_folder = "config_empty")
+  # this is not a warning we want to test but pipeline_init already warns for the empty config
+  expect_warning(setup_pipeline_init(config_folder = "config_empty"))
 
-  expect_error(
-    pipeline_vis(),
-    "Can\'t find any pipeline objects"
-  )
+  expect_error(pipeline_vis(), "Can\'t find any pipeline objects")
 })

@@ -79,7 +79,7 @@ load_data <- function(loc, date, timerange, readFunc, fstcolumns = NULL, fstfilt
         if (!is.null(fstfilter)) {
           rows <- ft[, names(fstfilter), drop = FALSE] |>
             mutate(filt = !!(fstfilter[[1]])) |> # Look out, only 1 filter possible
-            pull(filt) |>
+            pull(.data$filt) |>
             which()
         } else {
           rows <- seq_len(nrow(ft)) # simply rows <- TRUE or NULL doesn't work

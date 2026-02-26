@@ -40,6 +40,24 @@ check_list <- function(x,
   )
 }
 
+
+#' @title remove comments
+#' @description
+#' Helper function, using R's built-in parser to remove comments from code (both full- & inline)
+#' Used instead of regex due to # usage in strings
+#' e.g. my_string <- "using # inside string"
+#'
+#' @param code String: code that needs to be stripped from comments
+#'
+#' @returns String: input without comments
+#' @keywords internal
+#'
+remove_comments <- function(code) {
+  expr <- parse(text = code, keep.source = FALSE)
+  return(paste(deparse(expr), collapse = "\n"))
+}
+
+
 #' @title string glue explicit error
 #' @description
 #' Helper function, used for wrapping explicit errors

@@ -195,7 +195,7 @@ save_object <- function(object_name, p_e, call = parent.frame()) {
   default_save_funcs <- list(
     csv = write_csv2,
     png = function(object, bestand, ...) {
-      save_image(object, bestand, device = png, ...) # Here, the device *function* 'png'
+      save_image(object, bestand, device = grDevices::png, ...) # Here, the device *function* 'png'
     },
     svg = function(object, bestand, ...) {
       save_image(object, bestand, device = "svg", ...) # Here, the *string* 'svg'

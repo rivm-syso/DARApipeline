@@ -185,8 +185,7 @@ open_tbl <- function(con_specs, con) {
     if (!("dbschema" %in% names(con_specs$tbl_args))) {
       cli_abort(
         c("!" = "{.arg dbcatalog} is specified in {.arg con_specs$tbl_args},
-          but not {.arg dbschema}! Please supply both!"),
-        .call = .call
+          but not {.arg dbschema}! Please supply both!")
       )
     }
     tbl_db <-

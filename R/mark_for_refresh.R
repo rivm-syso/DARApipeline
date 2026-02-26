@@ -20,7 +20,7 @@ mark_for_refresh <- function(data_assets = NULL, ..., p_e = pipeline_env) {
   check_data_asset(data_assets, c("data", "object", "other"), p_e = p_e)
 
   object_table <- grab_object_table(p_e = p_e, call = call)
-  all_data_assets <- object_table |> pull(data_asset_name)
+  all_data_assets <- object_table |> pull(.data$data_asset_name)
 
   data_assets <- data_assets %||% all_data_assets
 
