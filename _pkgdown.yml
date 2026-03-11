@@ -1,4 +1,4 @@
-url: ~
+url: http://dara.gitpages.rivm.nl/DARApipeline
 template:
   bootstrap: 5
   light-switch: true
@@ -21,6 +21,7 @@ reference:
   - setup_environment
   - pipeline_render_report
   - check_last_successful_run
+  - check_most_recent_data
 - title: "Grab functions"
   desc: >
     Functions to grab parameters of the current EPI pipeline,

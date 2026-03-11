@@ -1,3 +1,10 @@
+# DARApipeline v0.8.1
+10-03-2026
+
+### :hammer_and_wrench: Changed
+
+- Added the new function `check_most_recent_data` tot he pkgdown.yaml so the pkgdown website can be updated.
+
 # DARApipeline v0.8.0
 26-02-2026
 

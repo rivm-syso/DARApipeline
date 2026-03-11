@@ -1,6 +1,6 @@
 Package: DARApipeline
 Title: Tools To Run Your EPI Pipelines
-Version: 0.7.1
+Version: 0.8.1
 Authors@R:
     person("DARAteam", , , "dara-team-list@rivm.nl", role = c("cre", "aut"))
 Description: DARApipeline is an R package that provides you with the tools
