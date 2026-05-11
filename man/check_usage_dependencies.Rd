@@ -4,7 +4,7 @@
 \alias{check_usage_dependencies}
 \title{Check usage dependencies}
 \usage{
-check_usage_dependencies(object_name, p_e = pipeline_env)
+check_usage_dependencies(object_name, p_e = pipeline_env, test_mode = FALSE)
 }
 \arguments{
 \item{object_name}{Character. The name of the object.}

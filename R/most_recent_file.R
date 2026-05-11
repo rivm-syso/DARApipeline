@@ -108,7 +108,7 @@ most_recent_file <- function(dir,
   if (length(timestamps) == 0) {
     file_mtimes <- file.info(files)$mtime
     most_recent_file <- files[file_mtimes == max(file_mtimes)]
-    warning(c(
+    cli_warn(c(
       "Not one file found with a timestamp in {.arg dir} {.file {dir}}.",
       "The following most recent file based on last modification time is returned instead.",
       most_recent_file[[1]]

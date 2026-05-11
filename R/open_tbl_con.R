@@ -115,7 +115,7 @@ open_tbl_con_argcheck <-
 
     # Error message when connection (con) specifications are missing
     if (!any(hasName(con_specs$con_args, c("database", "datasource")))) {
-      warning(
+      cli_warn(
         str_glue(
           "A 'database' or 'datasource' is missing from the con_specs$con_args in {.arg con_specs}
           - likely a connection won't work!.",

@@ -4,7 +4,11 @@
 \alias{check_dependencies_not_listed}
 \title{Check dependencies used and not mentioned in object_relations}
 \usage{
-check_dependencies_not_listed(object_name, p_e = pipeline_env)
+check_dependencies_not_listed(
+  object_name,
+  p_e = pipeline_env,
+  test_mode = FALSE
+)
 }
 \arguments{
 \item{object_name}{Character. The name of the object.}

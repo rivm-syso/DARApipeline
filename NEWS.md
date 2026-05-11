@@ -1,3 +1,13 @@
+# DARApipeline v0.8.2
+07-05-2026
+
+### :hammer_and_wrench: Changed
+
+- Fixed bug in `most_recent_file()`, `open_tbl_con`, and `load_data()`where some error and some warning messages were uninformative or errored.
+
+- Updated documentation on `check_dependencies_not_listed()`, `check_usage_dependencies()`. `remove_comments()`.
+
+
 # DARApipeline v0.8.1
 10-03-2026
 

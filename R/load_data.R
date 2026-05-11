@@ -45,7 +45,7 @@ load_data <- function(loc, date, timerange, readFunc, fstcolumns = NULL, fstfilt
       columnstring <- ""
     }
     if (ext != "fst" && !is.null(fstcolumns)) {
-      warning("{ext} != 'fst' so fstcolumns option will be ignored!")
+      cli_warn("{ext} != 'fst' so fstcolumns option will be ignored!")
       columnstring <- ""
     } else if (ext == "fst" && !is.null(fstcolumns)) {
       columnstring <- sprintf(" With fstcolumns = [%s]", str_c(fstcolumns, collapse = ", "))
@@ -57,7 +57,7 @@ load_data <- function(loc, date, timerange, readFunc, fstcolumns = NULL, fstfilt
       filterstring <- ""
     }
     if (ext != "fst" && !is.null(fstfilter)) {
-      warning("{ext} != 'fst' so fstfilter option will be ignored!")
+      cli_warn("{ext} != 'fst' so fstfilter option will be ignored!")
       filterstring <- ""
     } else if (ext == "fst" && !is.null(fstfilter)) {
       if (length(names(fstfilter)) != 1 || !is.list(fstfilter) || !is.call(fstfilter[[1]])) {
