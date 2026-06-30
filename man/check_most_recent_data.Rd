@@ -23,7 +23,7 @@ check_most_recent_data(
 \item{pattern}{Character. Pattern to match data files. Default = ".".}
 
 \item{days_valid_data}{Numeric. The number of days back from today to consider data as valid.
-If days_valid_data = 0, only data from today is considered. Default is 1.}
+If days_valid_data = 0, only data from today is considered. Default is 1 (data from yesterday).}
 
 \item{ext}{Character. File extension. Default = ".rds".}
 
@@ -31,7 +31,7 @@ If days_valid_data = 0, only data from today is considered. Default is 1.}
 
 \item{verbose_run_timestamp}{Logical. Report found file and timestamp. Default = TRUE.}
 
-\item{use_run_timestamp}{Logical. Use run timestamp of the pipeline for comparison. Default = FALSE.}
+\item{use_run_timestamp}{Logical. Use run timestamp of the pipeline for comparison of dates. Default = FALSE.}
 
 \item{error_on_invalid}{Logical. If TRUE, the function stops with an error on invalid input.
 If FALSE, the function returns TRUE/FALSE to indicate validity. Default is TRUE.}

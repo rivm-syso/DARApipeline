@@ -8,11 +8,11 @@
 #' @param dir Character. Full path to the directory containing data files.
 #' @param pattern Character. Pattern to match data files. Default = ".".
 #' @param days_valid_data Numeric. The number of days back from today to consider data as valid.
-#' If days_valid_data = 0, only data from today is considered. Default is 1.
+#' If days_valid_data = 0, only data from today is considered. Default is 1 (data from yesterday).
 #' @param ext Character. File extension. Default = ".rds".
 #' @param ignore_tmp Logical. Ignore temporary/lock files. Default = FALSE.
 #' @param verbose_run_timestamp Logical. Report found file and timestamp. Default = TRUE.
-#' @param use_run_timestamp Logical. Use run timestamp of the pipeline for comparison. Default = FALSE.
+#' @param use_run_timestamp Logical. Use run timestamp of the pipeline for comparison of dates. Default = FALSE.
 #' @param error_on_invalid Logical. If TRUE, the function stops with an error on invalid input.
 #' If FALSE, the function returns TRUE/FALSE to indicate validity. Default is TRUE.
 #' @param p_e Object: package_environment, internal - do not use
@@ -60,12 +60,14 @@ check_most_recent_data <- function(dir,
   }
 
   if (use_run_timestamp) {
-    date_from <- p_e$run_timestamp |> strptime(format = "%Y%m%d_%H%M")
+    date_from <- p_e$run_timestamp |>
+      strptime(format = "%Y%m%d_%H%M") |>
+      as.Date()
   } else {
-    date_from <- now()
+    date_from <- today()
   }
-
-  if ((date_from - days(days_valid_data)) > datetime) {
+  days_diff <- as.numeric(date_from - as.Date(datetime))
+  if (days_diff > days_valid_data) {
     if (!error_on_invalid) {
       return(FALSE)
     }

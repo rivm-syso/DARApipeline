@@ -1,3 +1,11 @@
+# DARApipeline v0.8.3
+30-06-2026
+
+### :hammer_and_wrench: Changed
+
+- Fixed bug in `check_most_recent_data()`: the validity check was performed using 24-hour intervals instead of calendar dates.
+As a result, e.g., when checking data shortly after 09:10 with `days_valid_data = 1`, data from the previous day at 09:10 was incorrectly rejected.
+
 # DARApipeline v0.8.2
 07-05-2026
 
