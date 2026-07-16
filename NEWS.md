@@ -1,3 +1,11 @@
+# DARApipeline v0.8.4
+16-07-2026
+
+### :hammer_and_wrench: Changed
+
+- URL of gitpages was changed from dara.gitpages.rivm.nl/DARApipeline to gitpages.rivm.nl/dara/DARApipeline.
+
+
 # DARApipeline v0.8.3
 30-06-2026
 

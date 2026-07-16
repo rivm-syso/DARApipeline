@@ -1,6 +1,6 @@
 Package: DARApipeline
 Title: Tools To Run Your EPI Pipelines
-Version: 0.8.1
+Version: 0.8.4
 Authors@R:
     person("DARAteam", , , "dara-team-list@rivm.nl", role = c("cre", "aut"))
 Description: DARApipeline is an R package that provides you with the tools
@@ -55,5 +55,5 @@ Remotes:
 Config/testthat/edition: 3
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.3
-URL: http://dara.gitpages.rivm.nl/DARApipeline/index.html
+URL: http://gitpages.rivm.nl/DARA/DARApipeline/index.html
+Config/roxygen2/version: 8.0.0

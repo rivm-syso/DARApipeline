@@ -11,12 +11,17 @@ DARApipeline is an R package that provides you with the tools to run an EPI pipe
 \seealso{
 Useful links:
 \itemize{
-  \item \url{http://dara.gitpages.rivm.nl/DARApipeline/index.html}
+  \item \url{http://gitpages.rivm.nl/DARA/DARApipeline/index.html}
 }
 
 }
 \author{
 \strong{Maintainer}: DARAteam \email{dara-team-list@rivm.nl}
+
+Authors:
+\itemize{
+  \item DARAteam \email{dara-team-list@rivm.nl}
+}
 
 }
 \keyword{internal}
