@@ -1,3 +1,10 @@
+
+[![R CMD Check](https://github.com/rivm-syso/{GH_repository}/actions/workflows/R-CMD-check.yml/badge.svg)](https://github.com/rivm-syso/{GH_repository}/actions/workflows/R-CMD-check.yml)
+[![Coverage](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/rivm-syso/{GH_repository}/gh-pages/badges/coverage.json)](https://github.com/rivm-syso/{GH_repository}/actions/workflows/test-coverage.yml)
+[![Lint](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/rivm-syso/{GH_repository}/gh-pages/badges/lint.json)](https://github.com/rivm-syso/{GH_repository}/actions/workflows/R-CMD-check.yml)
+
+
+
 # DARApipeline
 
 ## Tools To Run Your EPI Pipelines
