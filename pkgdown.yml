@@ -1,0 +1,12 @@
+pandoc: 3.8.3
+pkgdown: 2.2.0
+pkgdown_sha: ~
+articles:
+  check_last_successful_run-vignette: check_last_successful_run-vignette.html
+  copy_asset: copy_asset.html
+  render_report-vignette: render_report-vignette.html
+  run_old_timestamp: run_old_timestamp.html
+last_built: 2026-08-13T11:52Z
+urls:
+  reference: http://dara.gitpages.rivm.nl/DARApipeline/reference
+  article: http://dara.gitpages.rivm.nl/DARApipeline/articles

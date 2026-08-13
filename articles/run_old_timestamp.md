@@ -1,0 +1,132 @@
+# Run a pipeline with an old timestamp
+
+### How to run an EPI report pipeline with an older timestamp
+
+By default, EPI report-pipelines are run with a `run_timestamp` of the
+run day. However, in some cases, you may need to run the pipeline with
+an older timestamp. This can be helpful if you want to:
+
+- Exactly recreate a report from a couple of weeks ago
+
+- Rerun a report after correcting a data error, or
+
+- Conduct an analyses with a specific end-date.
+
+This vignette provides two different options for running your pipeline
+with an old timestamp.
+
+### Important decisions and preparations
+
+Before we go on and explain how to rerun your pipeline, there are some
+decisions to be made and things to keep in mind. Read the following
+questions carefully before starting to run your pipeline.
+
+- *From which location are you running the pipeline?  *
+  If you are testing stuff out, checking data, or experimenting, you can
+  run the pipeline from own personal location. Are you replacing a
+  production report? Then you should run the pipeline from the shared
+  r-drive, but rename the cache folder with the run_timestamp you want
+  to replace first. Somethign like:
+  `cache/{your_run_timestamp}_mistake`. This ensures version control,
+  even when rerunning a pipeline from the r-drive. Do NOT run the
+  git_prepare_production step if you are running from the shared
+  r-drive, as this will merge develop into production before the
+  scheduled production run. Do you have any doubts? Let the DARA-team
+  help you.
+- *Do you need to run the pipeline with the current code and scripts, or
+  do you need an exact replica of the code given the run_timestamp?  *
+  If the current code of the production or develop branch is okay,
+  create a new branch from develop or production, and follow the steps
+  from option 1 or 2 in your new branch.  
+  If you need to recreate a pipeline with the exact same code as when it
+  was generated, ask the DARA-team for help. We will find the last
+  commit before or on your run_timestamp on the production branch,
+  create a new branch from that specific commit, and run the pipeline
+  with you.
+
+### Option 1: Rerun the pipeline with updated data
+
+The first approach allows you to rerun your pipeline and generate a
+report for a previous date, using *updated data*. This is particularly
+useful if you’ve detected and corrected an error in your data, or if you
+need to create a full report for a specific date but there is a delay in
+the reporting of cases (e.g. yearly reports).
+
+1.  Run your datasource-pipeline to get the most up-to-date data. Do not
+    specify the `run_timestamp` argument in
+    [`pipeline_init()`](http://dara.gitpages.rivm.nl/DARApipeline/reference/pipeline_init.md).
+2.  In your report-pipeline, add the desired timestamp to
+    [`pipeline_init()`](http://dara.gitpages.rivm.nl/DARApipeline/reference/pipeline_init.md)
+    using the `run_timestamp` argu ment.
+    - `pipeline_init(run_timestamp = "20250613_1200")`
+    - If you have scripted well, all your date variables are dependent
+      on your `run_timestamp`, and will automatically adjust when you
+      change the `run_timestamp`.
+    - Tables and figures that are filtered by date or time will also
+      update accordingly.
+3.  Run your report-pipeline. The generated report and all other objects
+    will be saved with the specified `run_timestamp` in the filename.
+    Cache objects will be saved in the folder
+    `cache/{your_run_timestamp}`. NB: Previous cache-objects from that
+    exact `run_timestamp` will be overwritten! Rename the previous cache
+    folder to `cache/{run_timestamp}_original` or another clear name.
+
+### Option 2: Rerun pipeline with exactly the same data
+
+The option allows you to recreate a report or object as it was
+originally generated on a specific date, with **no updates to the
+data**. This can be useful for version control, or fixing minor edits
+like typos in a previously generated report, without changing the
+original data. Again, this only works if you’ve scripted according to
+DARA guidelines and based all of your date-time variables on the
+`run_timestamp`.
+
+1.  Since you want to recreate the report without updating the data,
+    there is no need to rerun the datasource-pipeline. Instead, manually
+    load the transformed data file corresponding with the specific
+    `run_timestamp`.
+
+- Open the report-pipeline project.
+
+- In the `Files`-pane, navigate to the datasource-pipeline on the shared
+  r-drive (or wherever production runs are saved).
+
+- Locate the `data/transformed` folder. The exact folder name may vary,
+  but you are looking for the output of the datasource-pipeline (not the
+  input datafiles). These files are typically in .rds format.
+
+- Load the transformed data file corresponding to the `run_timestamp` by
+
+  - Clicking on the file name
+  - Removing the timestamp from the name in the pop-up, and
+  - Clicking “OK”.
+
+- Repeat this process for all relevant datasources and corresponding
+  transformed data files.
+
+  **Tip:** Use the config file from your report-pipeline to identify all
+  datasources and data files used in the report-pipeline.
+
+2.  If you only want to correct a mistake in the markdown for the
+    report, but not in any specific objects, load the objects from the
+    cache folder generated previously. It is possible that not all
+    objects are saved in the cache folder. If that’s the case, those
+    will automatically be produced in the next steps.
+3.  In your report-pipeline, add the specific timestamp to
+    [`pipeline_init()`](http://dara.gitpages.rivm.nl/DARApipeline/reference/pipeline_init.md)
+    with the `run_timestamp` argument.
+    - `pipeline_init(run_timestamp = "20250613_1200")`
+4.  Run your report-pipeline.
+    - Add the specific tag(s) to
+      [`pipeline_run()`](http://dara.gitpages.rivm.nl/DARApipeline/reference/pipeline_run.md).
+      This case only the necessary files and objects will be created
+      and/or imported.
+
+    - During the run, you will see in the logging information that
+      [`pipeline_run()`](http://dara.gitpages.rivm.nl/DARApipeline/reference/pipeline_run.md)
+      skips data import, and the creation of objects already loaded, in
+      as the data and objects have already been loaded manually.
+
+    - The generated report and all output objects will be saved with the
+      specific `run_timestamp` in the filename, and cache objects are
+      saved in the folder `cache/{your_run_timstamp}`.

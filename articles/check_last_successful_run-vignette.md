@@ -1,0 +1,137 @@
+# How to use the function check_last_successful_run
+
+``` r
+
+# nolint start: object_usage_linter
+```
+
+First, we need to load the required packages.
+
+``` r
+
+library(DARApipeline)
+```
+
+``` r
+
+# nolint end: object_usage_linter
+```
+
+### Introduction
+
+The
+[`check_last_successful_run()`](http://dara.gitpages.rivm.nl/DARApipeline/reference/check_last_successful_run.md)
+function has been developed to quickly determine the last successful
+production run. Not only is the user able to check the current project,
+but every project (provided they have the path to the project).
+
+The parameters, and basic examples can be found in the documentation of
+the function. This can be found in the references tab, or in R using:
+
+``` r
+
+?check_last_successful_run
+```
+
+### Basic example
+
+To use this function, the user simply, only has to provide a file path
+to the log directory of the project they want to check. As seen below:
+
+``` r
+
+check_last_successful_run(log_dir = "<full_path_to_project_on_production>/logs")
+```
+
+#### Automatic search
+
+We can imagine that you might not always know the path to the project
+you want to check. In that case, you can make a minor addition to the
+`file_paths.yaml`. With this addition, the user only has to call the
+function
+[`check_last_successful_run()`](http://dara.gitpages.rivm.nl/DARApipeline/reference/check_last_successful_run.md),
+which automatically searches the production log files for the current
+project (even when their working from their home project)!.
+
+> Note: To use the automatic search, the user must have initialized
+> their pipeline. This can be done with the
+> [`pipeline_init()`](http://dara.gitpages.rivm.nl/DARApipeline/reference/pipeline_init.md)
+> function, or running their `prepare.R` script.
+
+The minor tweak means adding the following line to the
+`file_paths.yaml`:  
+`dir_mnt: /rivm/EPI`  
+
+The updated `file_paths.yaml` should look like this:
+
+``` yaml
+dir_outputs: your_output_dir_path
+dir_scripts: your_scripts_dir_path
+dir_project: your_project_dir_path
+dir_mnt: "/rivm/EPI"
+```
+
+> Note: The updated `file_paths.yaml` can also be pushed and merged,
+> meaning others users don’t have to update their config files. Newly
+> generated projects with cookiecutter will already have this updated
+> config.
+
+### Custom parameters
+
+The user can also specify custom parameters, these will be explained
+below.
+
+#### Include cronjob
+
+With this parameter, the user can specify if you want to include
+cronjobs or not. Default is FALSE *This might slow down the search, as
+it will have to search through all cronjob logs.*
+
+``` r
+
+check_successful_run(log_dir = "<full_path_to_project_on_production>/logs",
+                     include_cronjob = TRUE)
+```
+
+#### Cronjob only
+
+With this parameter, the user can specify to only search for cronjobs
+logs files. Default is FALSE. When set to TRUE, it overrides the
+`include_cronjob` parameter.
+
+``` r
+
+check_successful_run(log_dir = "<full_path_to_project_on_production>/logs",
+                     cronjob_only = TRUE)
+```
+
+#### Search window
+
+With this parameter, the user can specify a search window. This means
+that the function will only search for successful runs within the last
+number of specified lines. Default is 1 line.
+
+This is especially useful when the completion messsage isn’t on the last
+line (perhaps due to warnings, or other messages).
+
+``` r
+
+check_successful_run(log_dir = "<full_path_to_project_on_production>/logs",
+                     search_window = 5)
+```
+
+#### Search line
+
+With this parameter, the user can specify custom completion lines.
+Currently, the standard completion lines are:  
+*“=== Save step done! ===”*  
+*“=== Reporting step done! ===”*  
+
+Different completion lines should be specified in the `search_line`
+parameter.
+
+``` r
+
+check_last_successful_run(log_dir = "<full_path_to_project_on_production>/logs",
+                          search_line = "Infectieradar saved clean joined, weekly and intake data.")
+```
