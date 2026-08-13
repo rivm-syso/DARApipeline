@@ -33,6 +33,18 @@ jobs:
           extra-packages: any::covr, any::jsonlite
           needs: coverage
 
+      - name: Debug filesystem context
+        run: |
+            echo "PWD: $(pwd)"
+            echo "RUNNER_TEMP: $RUNNER_TEMP"
+            echo "GITHUB_WORKSPACE: $GITHUB_WORKSPACE"
+            echo "--- df -P ."
+            df -P .
+            echo "--- parsed mount"
+            df -P . | tail -1 | tr -s ' ' | cut -d' ' -f 6
+            echo "--- ls current dir"
+            ls -la
+
       - name: Run tests and compute coverage
         run: |
           cov <- covr::package_coverage(
