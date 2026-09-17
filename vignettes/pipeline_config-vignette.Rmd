@@ -1,0 +1,356 @@
+---
+title: "DARA EPIpipeline and config introduction"
+output:
+  rmarkdown::html_vignette:
+  tabset: TRUE
+vignette: >
+  %\VignetteIndexEntry{Pipeline design and config}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r eval, include=FALSE}
+DARApipeline_installed <- rlang::is_installed("DARApipeline") # nolint: namespace_linter
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
+
+```{r lintstart, include=FALSE}
+# nolint start: object_usage_linter
+```
+
+First, we need to load the required packages.
+```{r setup, include=TRUE, eval=TRUE}
+library(DARApipeline)
+```
+
+```{r lintend, include=FALSE}
+# nolint end: object_usage_linter
+```
+
+# Introduction
+
+**DARApipeline** functions are designed to help epidemiologists set up their infectious disease surveillance data pipelines.
+In this article, we will explain how the `config.yaml` files are used and how they interact with the `DARApipeline` functions. The main goal is to eliminate repeated code for loading input, deciding what to run, and saving output. At the same time, we aim to achieve a shared project structure across different surveillance projects.
+We refer to figures, tables, and maps collectively as *objects*. The pipeline:
+
+- loads all input required for each object
+- determines what to run based on dependencies between objects, tags or explicit calls
+- saves each object in the specified output format
+
+The parameters and basic examples can be found in the function documentation, either via the References tab or directly in R using:
+
+```{r help, eval=FALSE}
+?pipeline_run
+```
+
+## initiating the pipeline
+`pipeline_init()` is the starting function of the `DARApipeline`. All other `pipeline_` functions depend on it and will not work if this function has not been run. It performs a few important steps:
+
+1. Creates a `run_timestamp` (date + hour + minute) at the moment `pipeline_init()` is executed.
+2. Initiates logging in the `/logs` folder.
+3. Reads and interprets the configuration files in `config/`.
+
+There are some additional, smaller background features which we will skip for now.
+
+```{r helper, eval=TRUE, include=FALSE}
+library(DARAutils)
+local_logger_sink()
+withr::local_options(list(
+  DARApipeline.configdir = file.path("../tests/testthat/fixtures/configs/config"),
+  DARApipeline.skiplogging = TRUE
+))
+```
+
+```{r init, eval=TRUE}
+pipeline_init()
+```
+
+# config files
+
+As mentioned, `pipeline_init()` reads the configuration files. There are three essential YAML configuration files:
+
+- `config/base/file_paths.yaml`
+- `config/base/object_definitions.yaml`
+- `config/base/object_relations.yaml`
+
+Further, there is one extra, optional, YAML configuration file:
+- `config/base/object_schedules.yaml`
+
+In general, for YAML files, names between curly brackets indicate variables, e.g. `{RUN_TIMESTAMP}`. This means that the value of `RUN_TIMESTAMP`, created by the `pipeline_init()` function, is inserted at that position.
+
+We use this mechanism to store logs, cache, and output by date-time.
+
+## config file `object_definitions.yaml`
+
+This config file contains all object-specific information, except the relations between objects and schedules of objects.
+
+The first key is the `__defaults__` key. These are the default values applied when an object is missing a specific key. This helps reduce duplication (for example, avoiding a `skip_cache: no` line for every object).
+
+`type` indicates what type the entry is. We currently use three types:
+
+1. `type: object` – a table, figure, map, or HTML object created in this pipeline.
+2. `type: data` – a data `.rds` coming from a datasource pipeline.
+3. `type: other` – a fixed data file to import. This can for example be a static csv file.
+
+
+#### Mapping keys for `type: object`
+
+These are the possible mapping keys for objects of `type: object`:
+
+- `skip_cache`
+  By default, objects are cached, i.e. intermediately saved. The `skip_cache` key
+  indicates whether caching should be skipped.
+  Allowed values: `yes` or `no`.
+
+- `tag`
+  The tag name for this object. Tags are used to create logical groups of objects.
+  Groups of objects with the same tag can be defined as follows:
+
+```{yaml example_tags, eval=FALSE}
+my_object1:
+  type: object
+  tag: tag_a
+my_object2:
+  type: object
+  tag: tag_a
+my_object3:
+  type: object
+  tag: tag_b
+```
+
+Objects with the same tag can then be run as follows:
+
+```{r  eval = FALSE}
+# This example creates object1 and object2 and not object 3
+pipeline_run(tags = "tag_a")
+```
+
+- `output_formats`
+The saving format(s) of the object. Use the file extension names. Default formats include: csv, png, svg, and xlsx.
+
+```{yaml example_output_formats, eval=FALSE}
+my_object1:
+  type: object
+  output_formats: xlsx
+```
+
+
+- `output_arguments`
+The arguments which are passed to the output saving functions.
+```{yaml example_output_arguments, eval=FALSE}
+my_table:
+  type: object
+  output_formats:
+    - csv
+  output_arguments:
+    csv:
+      na: ""
+      row.names: FALSE
+```
+
+- `output_formats_custom`
+Custom file extensions and saving functions when you want to use a different format than those available in output_formats.
+It expects a mapping like:
+```{yaml example_output_formats_custom, eval=FALSE}
+my_object:
+  output_formats_custom:
+    rds: "saveRDS"
+```
+
+- `cache_dir`
+Directory where the cache should be saved if `skip_cache: no`.
+The value should be a directory that varies per run, for example:
+```{yaml example_cache_dir, eval=FALSE}
+my_object:
+  cache_dir: cache/{RUN_TIMESTAMP}
+```
+
+#### HTML objects
+An HTML report is a special object that is **not** run via `{r} pipeline_run()`. It is often indicated by `tag: html` and has a dedicated mapping key for the output location of the HTML file (this path does not need to vary per run, as the `RUN_TIMESTAMP` is used in the report output file name):
+
+```{yaml example_dir_html, eval=FALSE}
+html_report:
+   type: object
+  tag: html
+  dir_html: output/report/
+```
+> Note: For different reports we advise using different folders. This is why the `dir_html` path is not defined in `file_paths.yaml`.
+
+#### Mapping keys for `type: data`
+
+Objects with `type: data` represent input coming from a datasource pipeline.
+This type has one key that is specific to it:
+
+- `dir_input`
+  The file path to the data produced by the datasource pipeline.
+
+```{yaml example_dir_input, eval = FALSE}
+dat_osiris:
+  type: data
+  dir_input: /{TARGET_MOUNT}/EPI/DIS/DataPipelines/datasource-osiris/data/
+```
+> Note: We use the `{TARGET_MOUNT}` variable because the mount point differs between manual runs and cron jobs.
+
+
+#### Mapping keys for `type: other`
+
+Objects with type: other represent fixed, external files that do not change over time, in contrast to datasource files (`type: data`), where the most recent data (based on `RUN_TIMESTAMP`) is used automatically.
+
+This type also uses a single key:
+- `dir_input`
+The file path to the static input file.
+
+```{yaml example_type_other, eval = FALSE}
+my_constant_xlsx:
+  type: other
+  dir_input: /rivm/EPI/DIS/FixedData/data_static/data.xlsx
+```
+
+> Note: If data is refreshed (e.g. daily, weekly, monthly), it should be defined as `type: data`.
+Only truly constant inputs should use `type: other`.
+
+## Config file `file_paths.yaml`
+This config file stores the locations of pipeline scripts, outputs, and other shared resources.
+It has two required keys (the index names on the left side of the `:`):
+
+- `dir_scripts` – folder containing the scripts for the objects to run
+- `dir_outputs` – folder where pipeline output is saved
+
+Two other, optional keys commonly used in this file are:
+
+- `dir_proj` – the project directory, often structured as `department/DataPipelines/repository_name`
+- `dir_mnt` – the mount point where the project directory is available, often `/rivm/EPI`
+
+Other useful shared file paths can also be stored in `file_paths.yaml`.
+File paths that are specific to a single object should be stored in `object_definitions.yaml`.
+
+Example `file_paths.yaml`:
+
+```{yaml example_file_paths, eval = FALSE}
+dir_outputs: output/data_objects/{RUN_TIMESTAMP}
+dir_scripts: scripts/01_objects/{TAG}
+dir_proj: 'DIS/DataPipelines/report-surveillance'
+dir_mnt: "/rivm/EPI"
+```
+
+## Config file `object_relations.yaml`
+
+This config file defines the input–output relations between all object types:
+
+- `type: data` – used only as input (listed with a dash `-` in front)
+- `type: other` – used only as input
+- `type: object` – can appear both as input and as a key (the object being created)
+
+Example:
+```{yaml example_object_relations, eval = FALSE}
+my_figure:
+  - dat_osiris
+  - my_constant_xlsx
+```
+This should be read as: `my_figure` **depends on** `dat_osiris` **and** `my_constant_xlsx`.
+
+It is important to list **only** the inputs that are actually used in the script for that object, to keep the dependency graph accurate and minimal.
+
+## Config file `object_schedules.yaml`
+
+This optional config file can be used to define schedules for either tags or objects. A schedule defines
+when an object should be run. If no schedules are defined, all objects are created. A schedule for an
+object consists of three elements:
+- `day`: The day that the object should be created (in English)
+- `start`: The start time of the schedule window for the given day
+- `end`: The end time of the schedule window for the given day
+
+Objects and tags can have multiple schedules, either on the same day or different days. For example:
+
+```{yaml example_object_schedules, eval = FALSE}
+my_object:
+  - day: tuesday
+    start: "12:00"
+    end: "12:30"
+  - day: wednesday
+    start: "12:00"
+    end: "12:30"
+
+my_tag:
+  - day: monday
+    start: "09:00"
+    end: "10:30"
+```
+
+In this example, `my_object` will only run if the pipeline is run on tuesday or wednesday between
+12:00 and 12:30. Objects with tag `my_tag` will only run if the pipeline is run on monday between
+09:00 and 10:30.
+
+> Note: objects with a schedule that are dependencies of other objects will still be created. E.g.,
+if a pipeline is run outside the schedule of `my_object`, but `my_object` is needed to create a
+different object, `my_object` will still be run, even though its schedule is not active.
+
+# functions
+
+## `pipeline_run()`
+
+We already discussed `pipeline_init()`.
+The next main function is `pipeline_run()`. Based on what is listed in `object_relations.yaml`, it:
+
+1. **Loads input**
+   All required inputs for each object are loaded, if they are not already in memory.
+
+2. **Runs the scripts**
+   The object script is executed. The script location is determined using:
+   - `file_paths.yaml` (i.e. `dir_scripts`)
+   - the object name (which should match the script filename).
+
+3. **Caches and saves output**
+   Caching and output saving are controlled by the settings in `object_definitions.yaml`
+   (e.g. `skip_cache`, `cache_dir`, `output_formats`, `output_formats_custom`)
+   and by the output locations (i.e. `dir_outputs`) defined in `file_paths.yaml`.
+
+The order in which objects are run is determined from their dependencies in `object_relations.yaml`.
+
+Two useful parameters of `pipeline_run()` are:
+
+- `objects` – run a specific object or list of objects.
+- `tags` – run all objects that share one or more tags.
+
+Example:
+
+```{r eval=FALSE}
+# to only run objects + dependencies with these two tags
+pipeline_run(tags = c("tag_A", "tag_B"))
+
+# to only run one or multiple objects by name (+ dependencies)
+pipeline_run(objects = "figure_A")
+```
+
+## `pipeline_vis()`
+
+`pipeline_vis()` visualizes the Directed Acyclic Graph (DAG), i.e. a graph of
+all dependencies between objects, based on `object_relations.yaml`.
+
+This helps to:
+
+- check whether all dependencies and tags are defined correctly
+- see the order in which objects will be run
+- identify shared inputs between different objects
+
+```{r example_pipeline_vis, eval=TRUE, fig.width = 8, fig.height = 4.5}
+pipeline_vis()
+```
+
+## `pipeline_import_for()`
+
+HTML reports are not generated by `pipeline_run()`. Instead, they are typically created at the end of `report.R`.
+However, the report still needs all data and objects that the HTML depends on.
+
+For an HTML object with the name `html_report`, you can import all its dependencies with:
+
+```{r eval = FALSE}
+pipeline_import_for(data_assets = "html_report")
+```
+
+This loads all required inputs (as defined in `object_relations.yaml`) into memory, so they are available when you build the report.
+
+
+## Getting started with your own pipeline project
+To create your own report pipeline project using the `DARApipeline` template, you can start with the cookiecutter. Installation and usage instructions are available [here](
+https://gitlab.rivm.nl/dara/wiki/-/wikis/Tutorial:-How-to-install-cookiecutter-and-start-a-new-EPI-pipeline)

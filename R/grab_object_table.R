@@ -11,6 +11,7 @@
 #'
 #' @returns A tibble with object_params.
 #'
+#' @family Grab functions
 #' @export
 grab_object_table <- function(..., p_e = pipeline_env, call = parent.frame()) {
   check_dots_empty()

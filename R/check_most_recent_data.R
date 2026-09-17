@@ -27,6 +27,7 @@
 #'   days_valid_data = 7
 #' )
 #' }
+#' @family Pipeline functions
 #' @export
 
 check_most_recent_data <- function(dir,

@@ -1,36 +1,55 @@
+# [pre-commit] stage is ran during pre-commit, checks with "manual" stage are ran in CICD instead.
 repos:
   - repo: local
     hooks:
-      - id: roxygenize
-        name: Roxygenize package
-        entry: Rscript -e "roxygen2::roxygenize()"
+      - id: check-roxygenize
+        stages: [pre-commit]
+        name: Roxygenize check
+        entry: >-
+          Rscript -e "if (isTRUE(roxygen2::needs_roxygenize()))
+          stop('man/*.Rd files look out of date -- run devtools::document() and commit the result.',
+          call. = FALSE)"
         language: system
         files: '^(R|man)/'
+
   - repo: https://github.com/lorenzwalthert/precommit
-    rev: v0.4.3.9014
+    rev: v0.4.3.9029
     hooks:
       - id: use-tidy-description
-      - id: lintr
+        stages: [pre-commit]
+
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
     hooks:
-    - id: check-case-conflict
-    - id: check-illegal-windows-names
-    - id: check-json
     - id: check-merge-conflict
-    - id: check-toml
-    # - id: check-yaml
-    #   args: [--allow-multiple-documents]
+      stages: [pre-commit]
     - id: end-of-file-fixer
+      stages: [pre-commit]
       exclude: ^tests/testthat/_snaps/.*$
     - id: mixed-line-ending
-    #- id: no-commit-to-branch
-    #  args: [-p, "^(?!((release\/|bugfix\/|feature\/)?[a-z0-9]([a-z0-9]|-)*$)).*$"]
+      stages: [pre-commit]
     - id: trailing-whitespace
+      stages: [pre-commit]
       exclude: ^tests/testthat/_snaps/.*$
     - id: check-added-large-files
+      stages: [pre-commit]
+    - id: check-yaml
+      name: check yaml
+      description: checks yaml files for parseable syntax.
+      entry: check-yaml
+      language: python
+      types: [yaml]
+      stages: [manual]
+    - id: check-illegal-windows-names
+      name: check illegal windows names
+      entry: Illegal Windows filenames detected
+      language: fail
+      files: '(?i)((^|/)(CON|PRN|AUX|NUL|COM[\d¹²³]|LPT[\d¹²³])(\.|/|$)|[<>:\"\\|?*\x00-\x1F]|/[^/]*[\.\s]/|[^/]*[\.\s]$)'
+      stages: [manual]
+
   - repo: https://github.com/gitleaks/gitleaks
-    rev: v8.28.0
+    rev: v8.30.0
     hooks:
     - id: gitleaks
+      stages: [pre-commit]
       args: [--config=.gitleaks.toml, --verbose]

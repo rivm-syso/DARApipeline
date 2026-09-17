@@ -6,7 +6,7 @@
 \usage{
 get_copy_from_file_path(
   data_asset_name,
-  p_e,
+  p_e = pipeline_env,
   call = parent.frame(),
   test_mode = FALSE
 )
@@ -27,4 +27,10 @@ string with filepath to copy from
 \description{
 This functions uses the output_dir of a data_asset to determine where the object can be copied from.
 }
+\seealso{
+Other Copy functions:
+\code{\link[=copy_asset]{copy_asset()}},
+\code{\link[=get_copy_to_dir_path]{get_copy_to_dir_path()}}
+}
+\concept{Copy functions}
 \keyword{internal}

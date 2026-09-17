@@ -33,8 +33,11 @@ YYYYMMDD. Default = run_timestamp.}
 A tibble
 }
 \description{
-get_sp_data() imports from the sp database with an
-infection_code, start_ and end_date.
+get_sp_data() imports from the sp database with an infection_code,
+start_ and end_date.
+}
+\details{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
 }
 \examples{
 \dontrun{

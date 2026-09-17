@@ -59,6 +59,10 @@ tab <- get_tab(passwords$prod)
 
 }
 
-
-
 }
+\seealso{
+Other Load functions:
+\code{\link[=load_data]{load_data()}},
+\code{\link[=most_recent_file]{most_recent_file()}}
+}
+\concept{Load functions}

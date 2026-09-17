@@ -7,13 +7,13 @@
 #'   custom formats having priority.
 #'
 #' @param object R object. The object that needs to be saved.
-#' @param object_name Character. Name of the object Will be used in the
+#' @param object_name Character. Name of the object will be used in the
 #'   output name.
 #' @param output_dir character. Directory of the output file. Will be created if
 #'   it doesn't exist yet.
 #' @param run_timestamp character. The run_timestamp of the run. will be added to the
 #'   filename.
-#' @param output_formats character. Can be 'csv', 'png', 'svg' or 'xlsx'. Common saving
+#' @param output_formats character. Can be 'csv', 'png', 'svg', or 'xlsx'. Common saving
 #'   formats.
 #' @param output_formats_custom List. List in the form list(extension =
 #'   name_of_function) e.g. list(tsv = 'write_tsv'). The function has to be
@@ -31,16 +31,16 @@
 #'   output_formats = "csv"
 #' )
 #' }
-#'
+#' @family Save functions
 #' @export
 save_output <- function(
-    object,
-    object_name,
-    output_dir,
-    run_timestamp = run_timestamp,
-    output_formats,
-    output_formats_custom = list(),
-    output_arguments = list()) {
+  object,
+  object_name,
+  output_dir,
+  run_timestamp = run_timestamp,
+  output_formats,
+  output_formats_custom = list(),
+  output_arguments = list()) {
   if (!(missing(output_formats) || all(is.na(output_formats)))) {
     # default list of save functions
     default_save_funcs <- list(

@@ -17,6 +17,7 @@
 #' @returns NULL
 #'
 #' @md
+#' @family Pipeline functions
 #' @export
 #' @inheritParams grab_target_list
 #' @seealso [mark_for_refresh()]
@@ -25,8 +26,20 @@ pipeline_run <- function(tags = NULL, objects = NULL, ..., p_e = pipeline_env) {
   check_dots_empty()
   log_info("Running {.code {get_expr(current_call())}}")
 
-  objects_to_generate <- grab_target_list(tags, objects, p_e = p_e)
+  objects_to_generate <- grab_target_list(
+    tags,
+    objects,
+    verbose = TRUE,
+    p_e = p_e
+  )
   n_objects <- length(objects_to_generate)
+
+  if (n_objects == 0) {
+    cli_abort(c(
+      "!" = "No objects will be generated.",
+      "i" = "Are schedules for all objects or tags inactive?"
+    ))
+  }
 
   defer(log_layout())
 
@@ -35,7 +48,9 @@ pipeline_run <- function(tags = NULL, objects = NULL, ..., p_e = pipeline_env) {
     log_layout(layout_generator_subject(object_name))
 
     if (!is.null(p_e$refresh) && (object_name %in% p_e$refresh)) {
-      log_info("{.val {object_name}} was marked for refresh by {.code DARApipeline::mark_for_refresh()}")
+      log_info(
+        "{.val {object_name}} was marked for refresh by {.code DARApipeline::mark_for_refresh()}"
+      )
     } else if (object_name %in% names(.GlobalEnv)) {
       log_info("{.val {object_name}} already generated")
       next
@@ -53,7 +68,9 @@ pipeline_run <- function(tags = NULL, objects = NULL, ..., p_e = pipeline_env) {
     log_info("Done!")
   }
   log_layout(layout = layout_simple)
-  log_success("{.code {get_expr(current_call())}} finished! Generated {n_objects}.")
+  log_success(
+    "{.code {get_expr(current_call())}} finished! Generated {n_objects}."
+  )
   invisible(NULL)
 }
 
@@ -73,7 +90,12 @@ pipeline_run <- function(tags = NULL, objects = NULL, ..., p_e = pipeline_env) {
 #' @returns NULL
 #' @keywords internal
 #'
-source_object <- function(object_name, p_e, return_env = .GlobalEnv, call = parent.frame()) {
+source_object <- function(
+  object_name,
+  p_e,
+  return_env = .GlobalEnv,
+  call = parent.frame()
+) {
   object_params <- p_e$object_param_list[[object_name]]
   generate_script <- object_params$generate_script
   assign(x = "curr_object", value = object_name, envir = p_e)
@@ -119,7 +141,12 @@ cache_object <- function(object_name, p_e, call = parent.frame()) {
   }
 
   if (!exists(object_name, .GlobalEnv)) {
-    cli_abort(c("!" = "{.code cache_object()} can't save {.var {object_name}}. Object not found!"), call = call)
+    cli_abort(
+      c(
+        "!" = "{.code cache_object()} can't save {.var {object_name}}. Object not found!"
+      ),
+      call = call
+    )
   }
 
   cache_file <- object_params$cache_file
@@ -150,15 +177,46 @@ cache_object <- function(object_name, p_e, call = parent.frame()) {
 #' @keywords internal
 #'
 save_image <- function(object, bestand, device, ...) {
-  if (!length(list(...))) { # Default
+  if (!length(list(...))) {
+    # Default
     ggsave(
       bestand,
       object,
-      device = device, width = 15,
-      height = 10, units = "cm", scale = 2
+      device = device,
+      width = 15,
+      height = 10,
+      units = "cm",
+      scale = 2
     )
-  } else { # Custom
+  } else {
+    # Custom
     ggsave(bestand, object, device = device, ...)
+  }
+}
+
+#' @title Save image offline
+#' @description
+#' Helper function that saves an image for offline publications.
+#'
+#'
+#' @param object Object to be saved as image
+#' @param bestand File name to create on disk
+#' @param device Device to use. Parameter to be used within ggsave
+#'
+#' @returns NULL
+#' @keywords internal
+#'
+save_image_offline <- function(object, bestand, device, ...) {
+  if (!length(list(...))) {
+    # Default
+    ggsave_rivm(
+      bestand,
+      object,
+      device = device
+    )
+  } else {
+    # Custom
+    ggsave_rivm(bestand, object, device = device, ...)
   }
 }
 
@@ -177,12 +235,21 @@ save_image <- function(object, bestand, device, ...) {
 save_object <- function(object_name, p_e, call = parent.frame()) {
   check_data_asset(object_name, "object", p_e, call = call)
   object_params <- p_e$object_param_list[[object_name]]
-  if (length(object_params$output_formats) + length(object_params$output_formats_custom) == 0) {
+  if (
+    length(object_params$output_formats) +
+      length(object_params$output_formats_custom) ==
+      0
+  ) {
     return(invisible(NULL))
   }
 
   if (!exists(object_name, .GlobalEnv)) {
-    cli_abort(c("!" = "{.code cache_object()} can't save {.var {object_name}}. Object not found!"), call = call)
+    cli_abort(
+      c(
+        "!" = "{.code cache_object()} can't save {.var {object_name}}. Object not found!"
+      ),
+      call = call
+    )
   }
 
   output_formats <- object_params$output_formats
@@ -197,6 +264,9 @@ save_object <- function(object_name, p_e, call = parent.frame()) {
     png = function(object, bestand, ...) {
       save_image(object, bestand, device = grDevices::png, ...) # Here, the device *function* 'png'
     },
+    offline_pub = function(object, bestand, ...) {
+      save_image_offline(object, bestand, device = grDevices::png, ...)
+    },
     svg = function(object, bestand, ...) {
       save_image(object, bestand, device = "svg", ...) # Here, the *string* 'svg'
     },
@@ -205,11 +275,13 @@ save_object <- function(object_name, p_e, call = parent.frame()) {
   # filter save_funcs for selected output_formats
   ext_options <- names(default_save_funcs)
   if (length(setdiff(output_formats, ext_options))) {
-    unnknown_ext <- output_formats[!output_formats %in% names(default_save_funcs)]
+    unnknown_ext <- output_formats[
+      !output_formats %in% names(default_save_funcs)
+    ]
     cli_abort(c(
       "!" = "Parameter output_formats for data/object {.val {object_name}} must be one of
             {.val {names(default_save_funcs)}}, not {.val {unnknown_ext}}",
-      "i1" = "Adjust the config file {.file config/base/object_definitions.yaml} and rerun
+      "i1" = "Adjust the config files {.file config/base/object_definitions.yaml} and rerun
             {.run DARApipeline::pipeline_init()}.",
       "i2" = "Alternatively, see {.help DARApipeline:::save_object()} for explanation
             on how to use custom formats with custom functions."
@@ -224,7 +296,7 @@ save_object <- function(object_name, p_e, call = parent.frame()) {
     if (length(find(func_name)) == 0) {
       cli_abort(c(
         "!" = "Object can't be saved because the custom saving function {.val {func_name}} can't be found.",
-        "i" = "Load {.val {func_name}} into R before running {.code pipeline_ru()}."
+        "i" = "Load {.val {func_name}} into R before running {.code pipeline_run()}."
       ))
     }
     save_funcs[[ext]] <- get(func_name)
@@ -240,12 +312,21 @@ save_object <- function(object_name, p_e, call = parent.frame()) {
   for (ext in names(save_funcs)) {
     save_f <- save_funcs[[ext]]
     save_p <- save_parms[[ext]]
+
+    if (ext == "offline_pub") {
+      ext <- "png"
+    }
     ## GET
     run_timestamp <- get("run_timestamp", envir = p_e)
-    output_file_ext <- str_glue("{output_dir}/{object_name}_{run_timestamp}.{ext}")
+    output_file_ext <- str_glue(
+      "{output_dir}/{object_name}_{run_timestamp}.{ext}"
+    )
     log_info("Saving with {.arg ext} {.val {ext}} to {.file {output_file_ext}}")
     dir.create(output_dir, FALSE, TRUE)
-    do.call(save_f, c(list(get(object_name, envir = .GlobalEnv)), c(output_file_ext), save_p))
+    do.call(
+      save_f,
+      c(list(get(object_name, envir = .GlobalEnv)), c(output_file_ext), save_p)
+    )
   }
   invisible(NULL)
 }

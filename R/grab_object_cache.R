@@ -8,6 +8,7 @@
 #'
 #' @returns NULL
 #' @keywords internal
+#' @family Grab functions
 #' @export
 
 grab_object_cache <- function(object_name,

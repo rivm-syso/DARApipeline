@@ -6,6 +6,7 @@
 #' @returns A string in with the drive name
 #'
 #' @md
+#' @family Grab functions
 #' @export grab_current_drive_name
 #' @inheritParams grab_object_table
 grab_current_drive_name <- function(..., p_e = pipeline_env, call = parent.frame()) {

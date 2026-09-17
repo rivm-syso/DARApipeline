@@ -25,3 +25,4 @@ public/
 !tests/testthat/fixtures/logs/*
 !tests/testthat/fixtures/logs/cron_jobs/*
 !tests/testthat/fixtures/logs/cron_logs/*
+.positai

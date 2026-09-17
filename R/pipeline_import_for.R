@@ -12,6 +12,7 @@
 #' @returns NULL
 #'
 #' @md
+#' @family Pipeline functions
 #' @export
 #' @inheritParams pipeline_run
 #' @inheritParams grab_object_table

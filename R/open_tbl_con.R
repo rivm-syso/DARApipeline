@@ -50,8 +50,7 @@
 #'
 #' }
 #'
-#'
-#'
+#' @family Load functions
 #' @export
 
 # function to connect to table and collect

@@ -1,3 +1,31 @@
+# DARApipeline v0.9.0
+17-09-2026
+
+### :sparkles: Added
+- Added function families: Pipeline functions, Grab functions, Load functions, Save functions, Copy functions, Development functions (#202).
+- Added vignette 'DARA EPIpipeline and config introduction' to explain DARApipeline functions and the config (#211).
+- Added schedule functionality. An optional config file `object_schedules.yaml` can be added, containing schedule windows for objects or tags.
+These define the timeframe and day when an object or tag should be run. (#196)
+
+
+### :hammer_and_wrench: Changed
+
+- Added `ggsave_rivm` from the DARAvis package as a standard option to save a ggplot object in pipeline_run.
+Use this function for offline output with the argument 'offline_pub' in the config under 'output_formats'.
+Object will be saved as a png with adjusted font_size and dimensions (#179).
+
+- Changed package index page. Split `Load and save functions` to `Load functions` and `Save functions`. Added `Development functions`.
+
+- Fixed a bug in the output of `check_dependencies_not_listed()` where the warning message did not display the name of the object correctly.
+This is fixed now.
+
+- Removed BiocManager graph installation instructions; graph dependency was dropped in favor of igraph.
+
+### :bug: Fixed
+
+### :coffin: Deprecated
+
+
 # DARApipeline v0.8.4
 16-07-2026
 
@@ -13,6 +41,7 @@
 
 - Fixed bug in `check_most_recent_data()`: the validity check was performed using 24-hour intervals instead of calendar dates.
 As a result, e.g., when checking data shortly after 09:10 with `days_valid_data = 1`, data from the previous day at 09:10 was incorrectly rejected.
+
 
 # DARApipeline v0.8.2
 07-05-2026
@@ -31,6 +60,7 @@ As a result, e.g., when checking data shortly after 09:10 with `days_valid_data 
 
 - Added the new function `check_most_recent_data` tot he pkgdown.yaml so the pkgdown website can be updated.
 
+
 # DARApipeline v0.8.0
 26-02-2026
 
@@ -45,10 +75,10 @@ the docker image), before installing missing packages.
 This results in a faster CICD-pipeline runtime. (#174).
 
 ### :bug: Fixed
-- Commented object names are no longer flagged by check_dependencies_not_listed 
+- Commented object names are no longer flagged by check_dependencies_not_listed
 function (#181).
 
-- All config checks now give warnings instead of errors and an empty config should 
+- All config checks now give warnings instead of errors and an empty config should
 not result in an error(#177).
 
 ### :coffin: Deprecated
@@ -57,8 +87,8 @@ not result in an error(#177).
 18-11-2025
 
 ### :bug: Fixed
-- Fixed wrong missing dependencies are returned from `check_usage_dependencies()` 
-and `check_dependencies_not_listed()` in `setup_environment()` when two names of 
+- Fixed wrong missing dependencies are returned from `check_usage_dependencies()`
+and `check_dependencies_not_listed()` in `setup_environment()` when two names of
 dependencies partly overlap (#172)
 
 

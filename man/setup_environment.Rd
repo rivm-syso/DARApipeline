@@ -39,5 +39,16 @@ setup_environment(environment())
 ### ### ### DO NOT EDIT ABOVE THIS LINE! ### ### ###
 # (place the above at the top of a new object script)
 }
-
 }
+\seealso{
+Other Pipeline functions:
+\code{\link[=check_last_successful_run]{check_last_successful_run()}},
+\code{\link[=check_most_recent_data]{check_most_recent_data()}},
+\code{\link[=pipeline_import_for]{pipeline_import_for()}},
+\code{\link[=pipeline_init]{pipeline_init()}},
+\code{\link[=pipeline_render_report]{pipeline_render_report()}},
+\code{\link[=pipeline_run]{pipeline_run()}},
+\code{\link[=pipeline_status]{pipeline_status()}},
+\code{\link[=pipeline_vis]{pipeline_vis()}}
+}
+\concept{Pipeline functions}

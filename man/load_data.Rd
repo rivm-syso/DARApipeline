@@ -32,5 +32,10 @@ With the fst extension, optional parameters can be given to filter the data.
 \dontrun{
 load_data(loc = "./example", date = as.Date("2000-01-01"))
 }
-
 }
+\seealso{
+Other Load functions:
+\code{\link[=most_recent_file]{most_recent_file()}},
+\code{\link[=open_tbl_con]{open_tbl_con()}}
+}
+\concept{Load functions}

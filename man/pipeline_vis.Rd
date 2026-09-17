@@ -18,3 +18,15 @@ function is meant for interactive use to view the structure of an EPI report
 pipeline and can be very useful for inspecting the dependencies of your
 objects. The pipeline_vis() function can maximally visualize 18 tags.
 }
+\seealso{
+Other Pipeline functions:
+\code{\link[=check_last_successful_run]{check_last_successful_run()}},
+\code{\link[=check_most_recent_data]{check_most_recent_data()}},
+\code{\link[=pipeline_import_for]{pipeline_import_for()}},
+\code{\link[=pipeline_init]{pipeline_init()}},
+\code{\link[=pipeline_render_report]{pipeline_render_report()}},
+\code{\link[=pipeline_run]{pipeline_run()}},
+\code{\link[=pipeline_status]{pipeline_status()}},
+\code{\link[=setup_environment]{setup_environment()}}
+}
+\concept{Pipeline functions}

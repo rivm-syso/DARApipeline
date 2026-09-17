@@ -12,7 +12,6 @@
 #' \dontrun{
 #' idle(".", "\.", max_mins = 1, sleep_mins = .2, file_modification_buffer_mins = 1)
 #' }
-#'
 #' @export
 idle <-
   function(dir,

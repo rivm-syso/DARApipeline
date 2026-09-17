@@ -18,9 +18,17 @@ Saves an object to the cache directory. This function is dependent on DARA's dir
 
 save_cache is deprecated as of version 0.6.0.
 }
+\details{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+}
 \examples{
 \dontrun{
 save_cache(cars, "cars", "cache/19000101_0000")
 }
-
 }
+\seealso{
+Other Save functions:
+\code{\link[=save_data]{save_data()}},
+\code{\link[=save_output]{save_output()}}
+}
+\concept{Save functions}

@@ -24,3 +24,9 @@ into file paths for testing purposes. Default = FALSE}
 \description{
 This functions copies an object/data to a given location under \code{copy_to_file_path} in object_definitions.yaml.
 }
+\seealso{
+Other Copy functions:
+\code{\link[=get_copy_from_file_path]{get_copy_from_file_path()}},
+\code{\link[=get_copy_to_dir_path]{get_copy_to_dir_path()}}
+}
+\concept{Copy functions}

@@ -24,15 +24,25 @@ obj_E:
 obj_F:
   type: object
   tag: ~
+
 obj_G:
   type: object
   tag: t3
   copy_to_file_path: tests/testthat/fixtures/data/copied/
   overwrite: TRUE
+obj_G_no_overwrite:
+  type: object
+  copy_to_file_path: tests/testthat/fixtures/data/copied/
+  tag: ~
 obj_H:
   type: object
   copy_to_file_path: tests/testthat/fixtures/data/copied/
   overwrite: TRUE
+  tag: ~
+obj_H_no_overwrite:
+  type: object
+  copy_to_file_path: tests/testthat/fixtures/data/copied/
+  overwrite: FALSE
   tag: ~
 somedata:
   type: data

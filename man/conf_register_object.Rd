@@ -8,7 +8,9 @@ conf_register_object(
   object_name,
   conf_paths,
   conf_definitions,
+  conf_schedules,
   object_dag,
+  is_custom_stamp,
   p_e = pipeline_env,
   .call = parent.frame()
 )
@@ -19,6 +21,8 @@ conf_register_object(
 \item{conf_paths}{yaml: loaded yaml containing object paths from configuration file}
 
 \item{conf_definitions}{yaml: loaded yaml containing object definitions from configuration file}
+
+\item{conf_schedules}{yaml: loaded yaml containing object schedules from configuration file}
 
 \item{object_dag}{Dag: Directed Acyclic Graph object}
 

@@ -4,12 +4,20 @@
 \alias{pipeline_init}
 \title{Initiate DARApipeline for an EPI pipeline}
 \usage{
-pipeline_init(run_timestamp = NULL, ..., p_e = pipeline_env)
+pipeline_init(
+  run_timestamp = NULL,
+  custom_stamp = NULL,
+  ...,
+  p_e = pipeline_env
+)
 }
 \arguments{
 \item{run_timestamp}{Character. run_timestamp in the format YYYMMDD_HHMM.
 Defaults to the current day + time. Set this parameter to an old
 run_timestamp to 'go back in time'.}
+
+\item{custom_stamp}{Character. Advanced use only. Add custom text to timestamp.
+Particularly useful for multi-threaded pipeline runs. This bypasses the date format checks.}
 
 \item{...}{For internal use. Leave empty.}
 
@@ -34,4 +42,15 @@ pipeline_init()
 }
 \seealso{
 \code{\link[=grab_object_table]{grab_object_table()}}.
+
+Other Pipeline functions:
+\code{\link[=check_last_successful_run]{check_last_successful_run()}},
+\code{\link[=check_most_recent_data]{check_most_recent_data()}},
+\code{\link[=pipeline_import_for]{pipeline_import_for()}},
+\code{\link[=pipeline_render_report]{pipeline_render_report()}},
+\code{\link[=pipeline_run]{pipeline_run()}},
+\code{\link[=pipeline_status]{pipeline_status()}},
+\code{\link[=pipeline_vis]{pipeline_vis()}},
+\code{\link[=setup_environment]{setup_environment()}}
 }
+\concept{Pipeline functions}

@@ -4,7 +4,7 @@
 \alias{init_config}
 \title{Initialize config}
 \usage{
-init_config(dir_config, p_e, .call = parent.frame())
+init_config(dir_config, p_e, is_custom_stamp = FALSE, .call = parent.frame())
 }
 \arguments{
 \item{dir_config}{Path: to directory which holds the configuration files.}

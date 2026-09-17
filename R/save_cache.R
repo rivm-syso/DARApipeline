@@ -1,5 +1,7 @@
 #' Save an object to the cache directory
 #'
+#' `r lifecycle::badge("deprecated")`
+#'
 #' @description
 #' Saves an object to the cache directory. This function is dependent on DARA's directory structure.
 #'
@@ -13,12 +15,11 @@
 #' \dontrun{
 #' save_cache(cars, "cars", "cache/19000101_0000")
 #' }
-#'
+#' @family Save functions
 #' @export
 #'
 save_cache <- function(object, object_name, cache_dir) {
-  check_installed("lifecycle")
-  lifecycle::deprecate_warn(
+  deprecate_warn(
     when = "0.6.0",
     what = "DARApipeline::save_cache()",
     with = "DARApipeline::pipeline_run()",

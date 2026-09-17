@@ -30,5 +30,4 @@ Waits for a file to be available in a given directory.
 \dontrun{
 idle(".", "\.", max_mins = 1, sleep_mins = .2, file_modification_buffer_mins = 1)
 }
-
 }

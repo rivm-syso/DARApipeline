@@ -9,7 +9,7 @@
 #' objects. The pipeline_vis() function can maximally visualize 18 tags.
 #'
 #' @returns NULL
-#'
+#' @family Pipeline functions
 #' @export
 #' @inheritParams pipeline_run
 pipeline_vis <- function(..., p_e = pipeline_env) {

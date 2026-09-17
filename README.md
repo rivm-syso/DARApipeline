@@ -1,11 +1,8 @@
-
-[![R CMD Check](https://github.com/rivm-syso/{GH_repository}/actions/workflows/R-CMD-check.yml/badge.svg)](https://github.com/rivm-syso/{GH_repository}/actions/workflows/R-CMD-check.yml)
-[![Coverage](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/rivm-syso/{GH_repository}/gh-pages/badges/coverage.json)](https://github.com/rivm-syso/{GH_repository}/actions/workflows/test-coverage.yml)
-[![Lint](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/rivm-syso/{GH_repository}/gh-pages/badges/lint.json)](https://github.com/rivm-syso/{GH_repository}/actions/workflows/R-CMD-check.yml)
-
-
-
 # DARApipeline
+
+[![R CMD Check](https://github.com/rivm-syso/DARApipeline/actions/workflows/R-CMD-check.yml/badge.svg)](https://github.com/rivm-syso/DARApipeline/actions/workflows/R-CMD-check.yml)
+[![Coverage](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/rivm-syso/DARApipeline/gh-pages/badges/coverage.json)](https://github.com/rivm-syso/DARApipeline/actions/workflows/test-coverage.yml)
+[![Lint](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/rivm-syso/DARApipeline/gh-pages/badges/lint.json)](https://github.com/rivm-syso/DARApipeline/actions/workflows/R-CMD-check.yml)
 
 ## Tools To Run Your EPI Pipelines
 
@@ -19,16 +16,7 @@ provides you with the tools to run an EPI pipeline.
 
 #### Most recent version
 
-To install DARApipeline, first install the graph package by running:
-
-``` r
-if (!requireNamespace("BiocManager", quietly = TRUE)) {
-  install.packages("BiocManager")
-}
-BiocManager::install("graph")
-```
-
-You can now download the latest version of DARApipeline via the internal Gitlab environment using the remotes package:
+To install the latest version of DARApipeline via the internal Gitlab environment using the remotes package:
 
 ``` r
 if (!requireNamespace("remotes", quietly = TRUE)) {
@@ -47,16 +35,7 @@ remotes::install_gitlab("dara/DARApipeline@develop", host = "https://gitlab.rivm
 
 ### From RIVM-syso GitHub
 
-To install DARApipeline from GitHub, first install the graph package by running:
-
-``` r
-if (!requireNamespace("BiocManager", quietly = TRUE)) {
-  install.packages("BiocManager")
-}
-BiocManager::install("graph")
-```
-
-You can now download the latest version of DARApipeline via GitHub using the remotes package:
+To install the latest version of DARApipeline via GitHub using the remotes package:
 
 ``` r
 if (!requireNamespace("remotes", quietly = TRUE)) {

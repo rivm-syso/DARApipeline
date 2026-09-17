@@ -13,7 +13,12 @@ obj_F:
 - obj_E
 obj_G:
 - obj_E
+obj_G_no_overwrite:
+- obj_E
 obj_H:
+- obj_F
+- obj_G
+obj_H_no_overwrite:
 - obj_F
 - obj_G
 test_object:

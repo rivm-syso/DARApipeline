@@ -4,7 +4,11 @@
 \alias{get_copy_to_dir_path}
 \title{Get the copy to dir path from object_definitions}
 \usage{
-get_copy_to_dir_path(data_asset_name, p_e, call = parent.frame())
+get_copy_to_dir_path(
+  data_asset_name,
+  p_e = pipeline_env,
+  call = parent.frame()
+)
 }
 \arguments{
 \item{data_asset_name}{Character.}
@@ -19,4 +23,10 @@ string with filepath to copy to
 \description{
 Retrieve the given location under \code{copy_to_file_path} in object_definitions.yaml.
 }
+\seealso{
+Other Copy functions:
+\code{\link[=copy_asset]{copy_asset()}},
+\code{\link[=get_copy_from_file_path]{get_copy_from_file_path()}}
+}
+\concept{Copy functions}
 \keyword{internal}

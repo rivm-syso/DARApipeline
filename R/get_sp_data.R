@@ -1,8 +1,10 @@
 #'Retrieves data from a store procedure database within a start and end
 #'modification date
 #'
-#'@description get_sp_data() imports from the sp database with an
-#'  infection_code, start_ and end_date.
+#' `r lifecycle::badge("deprecated")`
+#'
+#'@description  get_sp_data() imports from the sp database with an infection_code,
+#'start_ and end_date.
 #'
 #'@param con_specs List. Connection arguments for the database. It should be a
 #'  named list with the names "con_args"/"sp_args". con_args should be a named
@@ -52,6 +54,12 @@ get_sp_data <-
            start_date = "19000101",
            end_date = grab_run_timestamp(),
            answer_format = c("text", "code", "both")) {
+    deprecate_warn(
+      when = "1.0.0",
+      what = "DARApipeline::get_sp_data()",
+      details = "Store procedure (sp) was never deployed as a data connection"
+    )
+
     # function to connect to store procedure table and collect
     # it depends on  get_sp_data_parse_date, get_sp_data_argcheck,open_con and open_sp
     start_date_parsed <- get_sp_data_parse_date(start_date)

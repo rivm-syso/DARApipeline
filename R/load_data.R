@@ -17,7 +17,7 @@
 #' \dontrun{
 #' load_data(loc = "./example", date = as.Date("2000-01-01"))
 #' }
-#'
+#' @family Load functions
 #' @export
 load_data <- function(loc, date, timerange, readFunc, fstcolumns = NULL, fstfilter = NULL) {
   datestring <- format(date, "%Y%m%d")

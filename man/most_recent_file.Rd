@@ -38,3 +38,9 @@ most_recent_data(dir = "./example")
 }
 
 }
+\seealso{
+Other Load functions:
+\code{\link[=load_data]{load_data()}},
+\code{\link[=open_tbl_con]{open_tbl_con()}}
+}
+\concept{Load functions}

@@ -34,7 +34,7 @@
 #'                           search_line = "Done!",
 #'                           search_window = 2)
 #' }
-#'
+#' @family Pipeline functions
 #' @export
 check_last_successful_run <- function(log_dir = "",
                                       include_cronjob = FALSE,

@@ -25,7 +25,7 @@
 #'   run_timestamp = "19000101_0000"
 #' )
 #' }
-#'
+#' @family Save functions
 #' @export
 save_data <- function(object,
                       file_directory,

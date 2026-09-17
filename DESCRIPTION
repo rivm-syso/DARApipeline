@@ -1,6 +1,6 @@
 Package: DARApipeline
 Title: Tools To Run Your EPI Pipelines
-Version: 0.8.4
+Version: 0.9.0
 Authors@R:
     person("DARAteam", , , "dara-team-list@rivm.nl", role = c("cre", "aut"))
 Description: DARApipeline is an R package that provides you with the tools
@@ -12,6 +12,7 @@ Imports:
     arrow (>= 16.1.0),
     cli (>= 3.6.2),
     DARAutils (>= 0.3.0),
+    DARAvis (>= 1.0.4),
     DBI (>= 1.2.3),
     dbplyr (>= 2.5.0),
     dplyr (>= 1.1.4),
@@ -37,12 +38,12 @@ Imports:
     withr (>= 3.0.0),
     writexl (>= 1.5.0),
     yaml (>= 2.3.7),
-    svglite (>= 2.1.2)
+    svglite (>= 2.1.2),
+    lifecycle (>= 1.0.5)
 Suggests:
     covr (>= 3.6.4),
     fst (>= 0.9.8),
     knitr (>= 1.47),
-    lifecycle (>= 1.0.4),
     mockery (>= 0.4.4),
     R.utils (>= 2.13.0),
     odbc (>= 1.5.0),
@@ -51,9 +52,12 @@ Suggests:
 VignetteBuilder:
     knitr
 Remotes:
-    git@github.com:rivm-syso/DARAutils.git
+    gitlab@gitlab.rivm.nl::dara/DARAutils@main,
+    gitlab@gitlab.rivm.nl::dara/DARAvis@main
+URL: http://gitpages.rivm.nl/DARA/DARApipeline/index.html
+Config/Roxygen2/markdown: TRUE
+Config/Roxygen2/version: 8.0.0
 Config/testthat/edition: 3
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-URL: http://gitpages.rivm.nl/DARA/DARApipeline/index.html
-Config/roxygen2/version: 8.0.0
+Config/roxygen2/version: 8.1.0

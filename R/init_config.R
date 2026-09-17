@@ -10,7 +10,7 @@
 #' @returns NULL
 #' @keywords internal
 #'
-init_config <- function(dir_config, p_e, .call = parent.frame()) {
+init_config <- function(dir_config, p_e, is_custom_stamp = FALSE, .call = parent.frame()) {
   # loads the config file, but only if changed
 
   ## GET
@@ -18,6 +18,7 @@ init_config <- function(dir_config, p_e, .call = parent.frame()) {
   file_paths <- path(dir_config, "base", "file_paths.yaml")
   file_relations <- path(dir_config, "base", "object_relations.yaml")
   file_definitions <- path(dir_config, "base", "object_definitions.yaml")
+  file_schedules <- path(dir_config, "base", "object_schedules.yaml")
 
   if (!all(file_exists(c(file_paths, file_relations, file_definitions)))) {
     cli_abort(
@@ -28,9 +29,16 @@ init_config <- function(dir_config, p_e, .call = parent.frame()) {
       call = .call
     )
   }
+
   config_hash <- str_c(hash_file(file_paths),
                        hash_file(file_relations),
                        hash_file(file_definitions),
+                       # file_schedules.yaml is optional
+                       if (file_exists(file_schedules)) {
+                         hash_file(file_schedules)
+                       } else {
+                         ""
+                       },
                        hash(p_e$run_timestamp))
   if (identical(config_hash, old_config_hash)) {
     log_info("{.file {dir_config}} is unchanged.")
@@ -46,6 +54,7 @@ init_config <- function(dir_config, p_e, .call = parent.frame()) {
   conf_paths <- conf_check_load_proj_paths(f = file_paths)
   conf_relations <- conf_check_load_relations(f = file_relations)
   conf_definitions <- conf_check_load_definitions(f = file_definitions)
+  conf_schedules <- conf_check_load_schedules(f = file_schedules)
 
   # all objects in the project
   all_objects <- conf_get_all_objects(conf_relations, conf_definitions)
@@ -55,7 +64,13 @@ init_config <- function(dir_config, p_e, .call = parent.frame()) {
 
   # object centric info, paths/tags
   object_param_list <- map(all_objects, \(x) {
-    conf_register_object(x, conf_paths, conf_definitions, object_dag, p_e = p_e)
+    conf_register_object(x,
+                         conf_paths,
+                         conf_definitions,
+                         conf_schedules,
+                         object_dag,
+                         is_custom_stamp = is_custom_stamp,
+                         p_e = p_e)
   }) |>
     set_names(all_objects)
 
@@ -160,6 +175,37 @@ conf_check_load_definitions <- function(f, .call = parent.frame()) {
   return(conf)
 }
 
+#' @title Check and load schedules
+#' @description
+#' Helper function to read object schedules
+#'
+#' @param f Path: filepath
+#' @param .call Object: the parent environment from return_env, internal - do not use
+#'
+#' @returns yaml
+#' @keywords internal
+#'
+conf_check_load_schedules <- function(f, .call = parent.frame()) {
+  if (!file_exists(f)) {
+    return(list())
+  }
+
+  schedules <- read_yaml(f)
+
+  if (is.null(schedules)) {
+    return(list())
+  }
+
+  if (!is.list(schedules)) {
+    cli_abort(
+      c("!" = "Config file {.file {f}} must contain a yaml list."),
+      call = .call
+    )
+  }
+
+  schedules
+}
+
 #' @title Get all objects
 #' @description
 #' Helper function to get all objects
@@ -187,6 +233,7 @@ conf_get_all_objects <- function(conf_relations, conf_definitions, .call = paren
 #' @param object_name String: name of the object
 #' @param conf_paths yaml: loaded yaml containing object paths from configuration file
 #' @param conf_definitions yaml: loaded yaml containing object definitions from configuration file
+#' @param conf_schedules yaml: loaded yaml containing object schedules from configuration file
 #' @param object_dag Dag: Directed Acyclic Graph object
 #' @param p_e Object: package_environment, internal - do not use
 #' @param .call Object: the parent environment from return_env, internal - do not use
@@ -195,12 +242,14 @@ conf_get_all_objects <- function(conf_relations, conf_definitions, .call = paren
 #' @keywords internal
 #'
 conf_register_object <- function(
-    object_name,
-    conf_paths,
-    conf_definitions,
-    object_dag,
-    p_e = pipeline_env,
-    .call = parent.frame()) {
+  object_name,
+  conf_paths,
+  conf_definitions,
+  conf_schedules,
+  object_dag,
+  is_custom_stamp,
+  p_e = pipeline_env,
+  .call = parent.frame()) {
   if (is.null(conf_definitions[["__defaults__"]])) {
     cli_warn(c(
       "!" = "No default params found for proj_definitions",
@@ -216,9 +265,27 @@ conf_register_object <- function(
     conf_object <- default_params
   }
 
+  conf_object$schedule_object <- NULL
+  conf_object$schedule_tag <- NULL
+
+  if (!is.null(conf_schedules$objects) && object_name %in% names(conf_schedules$objects)) {
+    conf_object$schedule_object <- conf_schedules$objects[[object_name]]
+  }
+
+  if (!is.null(conf_object$tag) &&
+        !is.null(conf_schedules$tags) &&
+        conf_object$tag %in% names(conf_schedules$tags)) {
+    conf_object$schedule_tag <- conf_schedules$tags[[conf_object$tag]]
+  }
+
   conf_object$hierarchy_level <- vertex_attr(object_dag, "hierarchy_level", object_name)
 
-  timestamp_value <- ymd_hm(p_e$run_timestamp)
+  if (is_custom_stamp) {
+    # temprarily remove custom stamp for date formatting (e.g. YEAR, DAY, ISOWEEK)
+    timestamp_value <- ymd_hm(strsplit(p_e$run_timestamp, "-")[[1]][1])
+  } else {
+    timestamp_value <- ymd_hm(p_e$run_timestamp)
+  }
 
   envir_glue <- env()
   envir_glue$YEAR <- year(timestamp_value)

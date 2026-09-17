@@ -123,7 +123,7 @@ test_that("Error messages when empty (no timestamps)", {
       ext = "",
       show_found_files = FALSE
     ),
-    regexp = "Not one file found with a timestamp in"
+    regexp = "No timestamp in the expected format"
   )
 })
 

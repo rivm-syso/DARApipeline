@@ -4,7 +4,7 @@
 \alias{init_logging}
 \title{Initialize logging}
 \usage{
-init_logging(path_logs, p_e)
+init_logging(path_logs, is_custom_stamp, p_e)
 }
 \arguments{
 \item{path_logs}{Path: Path to log file}

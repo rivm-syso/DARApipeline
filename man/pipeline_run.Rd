@@ -37,4 +37,15 @@ and loaded into R using \code{\link[=pipeline_init]{pipeline_init()}}.
 \seealso{
 \code{\link[=mark_for_refresh]{mark_for_refresh()}}
 \code{\link[=grab_target_list]{grab_target_list()}}
+
+Other Pipeline functions:
+\code{\link[=check_last_successful_run]{check_last_successful_run()}},
+\code{\link[=check_most_recent_data]{check_most_recent_data()}},
+\code{\link[=pipeline_import_for]{pipeline_import_for()}},
+\code{\link[=pipeline_init]{pipeline_init()}},
+\code{\link[=pipeline_render_report]{pipeline_render_report()}},
+\code{\link[=pipeline_status]{pipeline_status()}},
+\code{\link[=pipeline_vis]{pipeline_vis()}},
+\code{\link[=setup_environment]{setup_environment()}}
 }
+\concept{Pipeline functions}

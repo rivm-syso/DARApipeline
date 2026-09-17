@@ -12,6 +12,7 @@
 #' @returns NULL
 #'
 #' @md
+#' @family Copy functions
 #' @export
 copy_asset <- function(data_asset_name, p_e = pipeline_env, call = parent.frame(), test_mode = FALSE) {
   check_data_asset(data_asset_name, c("data", "other", "object"), p_e, call = call)
@@ -22,7 +23,7 @@ copy_asset <- function(data_asset_name, p_e = pipeline_env, call = parent.frame(
 
   if (is.null(overwrite)) {
     log_info("No {.val overwrite parameter} has been found in {.val object_definitions.yaml}!")
-    log_info("Manually setting {.var overwrite parameter} to {.val FALSE}...")
+    cli_inform("Manually setting {.var overwrite parameter} to {.val FALSE}...")
     overwrite <- FALSE
   }
 
@@ -31,9 +32,9 @@ copy_asset <- function(data_asset_name, p_e = pipeline_env, call = parent.frame(
     {
       dir.create(copy_to_dir_path, showWarnings = FALSE, recursive = TRUE)
       copy_to_file_path <- file.path(copy_to_dir_path, basename(copy_from_file_path))
-      file.copy(from = copy_from_file_path,
-                to = copy_to_file_path,
-                overwrite = overwrite)
+      copy_status = file.copy(from = copy_from_file_path,
+                              to = copy_to_file_path,
+                              overwrite = overwrite)
     },
     error = function(e) {
       cli_abort(
@@ -45,11 +46,13 @@ copy_asset <- function(data_asset_name, p_e = pipeline_env, call = parent.frame(
       )
     }
   )
-
-  if (file.exists(file.path(copy_to_file_path, basename(copy_from_file_path)))) {
-    log_info("Successfully copied {.val {copy_from_file_path}} to {.val {copy_to_file_path}}")
+  if (file.exists(file.path(dirname(copy_to_file_path), basename(copy_from_file_path)))) {
+    if (!copy_status) {
+      cli_warn("File already exists and {.var overwrite} has been set to {.val {FALSE}}, skipped copy!")
+    } else {
+      log_info("Successfully copied {.val {copy_from_file_path}} to {.val {copy_to_file_path}}")
+    }
   }
-
   return(copy_to_file_path)
 }
 
@@ -67,8 +70,9 @@ copy_asset <- function(data_asset_name, p_e = pipeline_env, call = parent.frame(
 #' @returns string with filepath to copy from
 #'
 #' @keywords internal
+#' @family Copy functions
 #' @md
-get_copy_from_file_path <- function(data_asset_name, p_e, call = parent.frame(), test_mode = FALSE) {
+get_copy_from_file_path <- function(data_asset_name, p_e = pipeline_env, call = parent.frame(), test_mode = FALSE) {
   object_params <- p_e$object_param_list[[data_asset_name]]
   # use output_dir for objects and dir_output for data in datasource
 
@@ -122,8 +126,9 @@ get_copy_from_file_path <- function(data_asset_name, p_e, call = parent.frame(),
 #' @returns string with filepath to copy to
 #'
 #' @keywords internal
+#' @family Copy functions
 #' @md
-get_copy_to_dir_path <- function(data_asset_name, p_e, call = parent.frame()) {
+get_copy_to_dir_path <- function(data_asset_name, p_e = pipeline_env, call = parent.frame()) {
   object_params <- p_e$object_param_list[[data_asset_name]]
 
   if (is.null(object_params$copy_to_file_path)) {

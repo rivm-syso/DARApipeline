@@ -17,7 +17,7 @@ save_output(
 \arguments{
 \item{object}{R object. The object that needs to be saved.}
 
-\item{object_name}{Character. Name of the object Will be used in the
+\item{object_name}{Character. Name of the object will be used in the
 output name.}
 
 \item{output_dir}{character. Directory of the output file. Will be created if
@@ -26,7 +26,7 @@ it doesn't exist yet.}
 \item{run_timestamp}{character. The run_timestamp of the run. will be added to the
 filename.}
 
-\item{output_formats}{character. Can be 'csv', 'png', 'svg' or 'xlsx'. Common saving
+\item{output_formats}{character. Can be 'csv', 'png', 'svg', or 'xlsx'. Common saving
 formats.}
 
 \item{output_formats_custom}{List. List in the form list(extension =
@@ -53,5 +53,10 @@ save_output(
   output_formats = "csv"
 )
 }
-
 }
+\seealso{
+Other Save functions:
+\code{\link[=save_cache]{save_cache()}},
+\code{\link[=save_data]{save_data()}}
+}
+\concept{Save functions}

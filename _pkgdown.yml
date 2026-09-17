@@ -1,4 +1,4 @@
-url: http://dara.gitpages.rivm.nl/DARApipeline
+url: http://gitpages.rivm.nl/DARA/DARApipeline
 template:
   bootstrap: 5
   light-switch: true
@@ -29,18 +29,23 @@ reference:
   contents:
   - grab_current_drive_name
   - grab_object_table
+  - grab_object_cache
   - grab_run_timestamp
   - grab_target_list
   - grab_target_mount
-- title: "Load and save functions"
+- title: "Load functions"
   desc: >
     Including functions to open database connections and get the most file path
     for the most recent file in a given directory.
   contents:
-  - get_sp_data
   - load_data
   - most_recent_file
   - open_tbl_con
+  - get_sp_data
+- title: "Save functions"
+  desc: >
+    Functions to save data, cache, or output.
+  contents:
   - save_cache
   - save_data
   - save_output
@@ -51,7 +56,11 @@ reference:
   - copy_asset
   - get_copy_from_file_path
   - get_copy_to_dir_path
+- title: "Development functions"
+  desc: >
+    Functions only used during the development of pipelines.
+  contents:
+  - mark_for_refresh
 - title: "Other functions"
   contents:
   - idle
-  - mark_for_refresh

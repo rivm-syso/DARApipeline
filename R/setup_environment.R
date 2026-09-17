@@ -21,7 +21,7 @@
 #' ### ### ### DO NOT EDIT ABOVE THIS LINE! ### ### ###
 #' # (place the above at the top of a new object script)
 #' }
-#'
+#' @family Pipeline functions
 #' @export
 setup_environment <- function(cur_env,
                               prepare_script = "scripts/00_prepare/prepare.R",
@@ -102,9 +102,7 @@ check_usage_dependencies <- function(object_name, p_e = pipeline_env, test_mode 
     return(invisible(NULL))
   }
 
-
   if (test_mode) {
-    print("testmode added")
     script_loc <- testthat::test_path(p_e$object_param_list[[object_name]]$generate_script)
   } else {
     script_loc <- p_e$object_param_list[[object_name]]$generate_script
@@ -165,7 +163,7 @@ check_dependencies_not_listed <- function(object_name, p_e = pipeline_env, test_
     if (str_detect(string = remove_comments(script_str), pattern = data_asset_exact)) {
       cli_warn(
         c(
-          "!" = "{.arg object_name} uses {.val {data_asset}} in the object generate script:{.file {script_loc}}
+          "!" = "{.val {object_name}} uses {.val {data_asset}} in the object generate script:{.file {script_loc}}
         but this is not stated in the {.file config/base/object_relations.yaml} file.",
           "i" = "Can you add {.val {data_asset}} as a dependency of {.val {object_name}} in the
         {.file config/base/object_relations.yaml} file or

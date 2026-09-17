@@ -5,6 +5,7 @@
 #' @returns A string in the form YYYMMDD_HHMM
 #'
 #' @md
+#' @family Grab functions
 #' @export
 #' @inheritParams grab_object_table
 grab_run_timestamp <- function(..., p_e = pipeline_env, call = parent.frame()) {

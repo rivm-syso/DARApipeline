@@ -43,7 +43,7 @@
 #'                       output = "dummy_report.html",
 #'                       custom_markdown_path = "extra_reports/")
 #' }
-#'
+#' @family Pipeline functions
 #' @export
 pipeline_render_report <- function(markdown_file,
                                    output_file,
@@ -100,21 +100,21 @@ pipeline_render_report <- function(markdown_file,
     cli_abort(c(
       "i" = "Failed to create output directory, please check writing location!",
       "*" = "Original error:\t {e}"
-    ), call = rlang::caller_env(4))
+    ), call = caller_env(4))
   })
 
   # This actually checks if the dir is created.
   if (!dir.exists(html_path)) {
     cli_abort(c(
       "*" = "Unable to create output directory {.val {html_path}}, please check writing location!"
-    ), call = rlang::caller_env(4))
+    ), call = caller_env(4))
   }
 
   # Note: return 0 has writeable acces, -1 is not writeable.
   if (file.access(html_path, mode = 2) == -1) {
     cli_abort(c(
       "*" = "You have no write acces to {.val {html_path}}, please check writing location!"
-    ), call = rlang::caller_env(4))
+    ), call = caller_env(4))
   }
 
   # Checks for markdown paths
@@ -150,7 +150,7 @@ check_extension_helper <- function(filename, ext) {
       cli_abort(c(
                   "*" = "A different extension has been supplied to {.val {filename}}, then expected: {.val {ext}},
                   please change extension!"),
-      call = rlang::caller_env(4)
+      call = caller_env(4)
       )
     }
     cli_inform("Can't find extension in {.val {filename}}, adding {.val {ext}}...")

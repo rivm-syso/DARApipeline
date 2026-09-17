@@ -12,3 +12,5 @@
 ^Meta$
 ^\.gitleaks\.toml$
 ^Rlib$
+^\.positai$
+^\.claude$

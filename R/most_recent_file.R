@@ -18,6 +18,7 @@
 #' most_recent_data(dir = "./example")
 #' }
 #'
+#' @family Load functions
 #' @export
 most_recent_file <- function(dir,
                              pattern = ".",
@@ -47,6 +48,16 @@ most_recent_file <- function(dir,
   # make {} variables possible in file directories
   dir <- str_glue(dir)
 
+  # case: folder doesn't exist
+  if (!dir.exists(dir)) {
+    cli_abort(c(
+      "!" = "{.arg dir} {.file {dir}} does not exist.",
+      "i" = "Perhaps a previous step failed and the directory was never created?"
+    ))
+  }
+  # Normalize path to avoid double "/" in console output
+  dir <- fs::path_tidy(dir)
+
   # List files in directory
   files <- list.files(dir, full.names = TRUE, recursive = TRUE) |>
     str_subset(pattern = pattern) |>
@@ -66,13 +77,6 @@ most_recent_file <- function(dir,
       ))
     }
 
-    # case: folder doesn't exist
-    if (!dir.exists(dir)) {
-      cli_abort(c(
-        "!" = "{.arg dir} {.file {dir}} does not exist.",
-        "i" = "Perhaps a previous step failed and the directory was never created?"
-      ))
-    }
 
     # case: file found but wrong pattern
     files_wrongname <- list.files(dir, full.names = TRUE, recursive = TRUE) |>
@@ -109,9 +113,10 @@ most_recent_file <- function(dir,
     file_mtimes <- file.info(files)$mtime
     most_recent_file <- files[file_mtimes == max(file_mtimes)]
     cli_warn(c(
-      "Not one file found with a timestamp in {.arg dir} {.file {dir}}.",
-      "The following most recent file based on last modification time is returned instead.",
-      most_recent_file[[1]]
+      "No timestamp in the expected format {.code YYYYMMDD_HHMM} found in file names in {.arg dir} {.file {dir}}.",
+      ">" = "Consider renaming files to {.code YYYYMMDD_HHMM}, e.g. {.val 20240131_0930}.",
+      "i" = "Returning the most recent file by last modification time instead:",
+      " " = "{.file {most_recent_file[[1]]}}"
     ))
   } else {
     most_recent_file <- files[max(timestamps) == timestamps]

@@ -15,6 +15,8 @@
 #' @param run_timestamp Character. run_timestamp in the format YYYMMDD_HHMM.
 #'  Defaults to the current day + time. Set this parameter to an old
 #'  run_timestamp to 'go back in time'.
+#' @param custom_stamp Character. Advanced use only. Add custom text to timestamp.
+#'  Particularly useful for multi-threaded pipeline runs. This bypasses the date format checks.
 #'
 #' @seealso [grab_object_table()].
 #'
@@ -24,20 +26,44 @@
 #' }
 #'
 #' @inheritParams grab_object_table
+#' @family Pipeline functions
 #' @export
-pipeline_init <- function(run_timestamp = NULL, ..., p_e = pipeline_env) {
+pipeline_init <- function(run_timestamp = NULL,
+                          custom_stamp = NULL,
+                          ...,
+                          p_e = pipeline_env) {
   check_dots_empty()
+  is_custom_stamp <- FALSE
   # check run_timestamp format
   check_string(run_timestamp, allow_null = TRUE) # also checks length = 1
+  check_string(custom_stamp, allow_null = TRUE)
   if (!is.null(run_timestamp)) {
     invalid_run_timestamp <- is.na(suppressWarnings(ymd_hm(run_timestamp))) ||
       !str_detect(run_timestamp, "^[0-9]{8}_[0-9]{4}$")
+
     if (invalid_run_timestamp) {
       cli_abort(c(
         "!" = "{.arg run_timestamp} must be a valid date and a string of the format YYYMMDD_HHMM",
         "i" = "given {.val {run_timestamp}}"
       ))
     }
+  }
+
+  # When custom stamp has been provided, add this text to the timestamp
+  # This is useful when multiple pipelines are started at the same time.
+  if (!is.null(custom_stamp)) {
+    log_info("Detected {.var custom_stamp}!")
+    if (!is.null(run_timestamp)) {
+      cli_abort(c(
+        "!" = "Both {.var run_timestamp} and {.var custom_stamp} detected!",
+        "i" = "Only one of the two variables can be provided."
+      ))
+    }
+
+    log_info("Trailing {.val {custom_stamp}} to timestamp!")
+    run_timestamp <- paste(now() |> format(format = "%Y%m%d_%H%M"),
+                           custom_stamp, sep = "-")
+    is_custom_stamp <- TRUE
   }
 
   log_info("Initiating EPI pipeline...")
@@ -47,9 +73,9 @@ pipeline_init <- function(run_timestamp = NULL, ..., p_e = pipeline_env) {
   init_run_timestamp(run_timestamp, p_e = p_e)
   init_target_mount(p_e = p_e)
   if (!getOption("DARApipeline.skiplogging")) {
-    init_logging(getOption("DARApipeline.logsdir"), p_e = p_e)
+    init_logging(getOption("DARApipeline.logsdir"), is_custom_stamp, p_e = p_e)
   }
-  init_config(getOption("DARApipeline.configdir"), p_e = p_e)
+  init_config(getOption("DARApipeline.configdir"), is_custom_stamp, p_e = p_e)
 
   log_info("Init finished!")
 
@@ -147,7 +173,7 @@ init_run_timestamp <- function(run_timestamp, p_e) {
 #' @returns NULL
 #' @keywords internal
 #'
-init_logging <- function(path_logs, p_e) {
+init_logging <- function(path_logs, is_custom_stamp, p_e) {
   # setup logging to file: creates a log file, sets the appender to this file and
   # redirects 'normal' messages/errors to these files as well
 
@@ -155,14 +181,24 @@ init_logging <- function(path_logs, p_e) {
   run_timestamp <- get("run_timestamp", envir = p_e)
 
   # Create path for log
-  path_log <- sprintf(
-    "%s/%s/%s_%s.log",
-    path_logs,
-    format(ymd_hm(run_timestamp), "%Y%m"),
-    # year-month
-    run_timestamp,
-    getwd() |> basename()
-  )
+  if (!is_custom_stamp) {
+    path_log <- sprintf(
+      "%s/%s/%s_%s.log",
+      path_logs,
+      format(ymd_hm(run_timestamp), "%Y%m"),
+      # year-month
+      run_timestamp,
+      getwd() |> basename()
+    )
+  } else { # If custom stamp is used, extract same date and add to dedicated logs folder
+    path_log <- sprintf(
+      "%s/%s/%s_%s.log",
+      path_logs,
+      paste0(format(ymd_hm(strsplit(run_timestamp, "-")[[1]][1]), "%Y%m"), "_multithread"),
+      run_timestamp,
+      getwd() |> basename()
+    )
+  }
 
   ## ASSIGN
   assign("path_log", path_log, envir = p_e)

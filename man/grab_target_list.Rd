@@ -8,6 +8,7 @@ grab_target_list(
   tags = NULL,
   objects = NULL,
   ...,
+  verbose = FALSE,
   p_e = pipeline_env,
   call = parent.frame()
 )
@@ -20,6 +21,9 @@ to all tags if objects = NULL.}
 Defaults to all objects if tags = NULL.}
 
 \item{...}{For internal use. Leave empty.}
+
+\item{verbose}{Boolean. Show schedule message for an object or not?
+Defaults to FALSE.}
 
 \item{p_e}{For internal use. The hidden pipeline state environment.}
 
@@ -40,3 +44,12 @@ without actually running \link[DARApipeline]{pipeline_run} yet.
 Note that it only returns \strong{objects} not other types of data_assets
 (data/other).
 }
+\seealso{
+Other Grab functions:
+\code{\link[=grab_current_drive_name]{grab_current_drive_name()}},
+\code{\link[=grab_object_cache]{grab_object_cache()}},
+\code{\link[=grab_object_table]{grab_object_table()}},
+\code{\link[=grab_run_timestamp]{grab_run_timestamp()}},
+\code{\link[=grab_target_mount]{grab_target_mount()}}
+}
+\concept{Grab functions}

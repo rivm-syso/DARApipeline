@@ -10,7 +10,7 @@ vignette: >
 ---
 
 ```{r eval, include=FALSE}
-darautils_installed <- rlang::is_installed("DARAutils")
+darautils_installed <- rlang::is_installed("DARAutils") # nolint: namespace_linter
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
 ```
 

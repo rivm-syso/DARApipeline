@@ -5,6 +5,7 @@
 #' @returns A string in the form of "rivm"
 #'
 #' @md
+#' @family Grab functions
 #' @export
 #' @inheritParams grab_object_table
 grab_target_mount <- function(..., p_e = pipeline_env, call = parent.frame()) {

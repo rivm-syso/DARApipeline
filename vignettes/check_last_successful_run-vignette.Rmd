@@ -10,11 +10,11 @@ vignette: >
 ---
 
 ```{r eval, include=FALSE}
-darautils_installed <- rlang::is_installed("DARAutils")
+darautils_installed <- rlang::is_installed("DARAutils") # nolint: namespace_linter
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
 ```
 
-```{r lintstart, include FALSE}
+```{r lintstart, include=FALSE}
 # nolint start: object_usage_linter
 ```
 
@@ -23,7 +23,7 @@ First, we need to load the required packages.
 library(DARApipeline)
 ```
 
-```{r lintend, include FALSE}
+```{r lintend, include=FALSE}
 # nolint end: object_usage_linter
 ```
 

@@ -9,7 +9,7 @@
 #'  4. The location of the log file.
 #'
 #' @returns NULL
-#'
+#' @family Pipeline functions
 #' @export
 #' @inheritParams grab_object_table
 pipeline_status <- function(..., p_e = pipeline_env) {
