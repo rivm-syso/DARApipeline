@@ -1,3 +1,9 @@
+# DARApipeline v0.9.1
+05-10-2026
+
+### :bug: Fixed
+- Gitpages was not updated to v0.9 due to a bug in the ci/cd dependencies (#218). 
+
 # DARApipeline v0.9.0
 17-09-2026
 
